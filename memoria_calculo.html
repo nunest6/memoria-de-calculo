@@ -1,0 +1,4221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memória de Cálculo Fiscal – GTCON</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =========================
+   RESET E BASE
+========================= */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* =========================
+   TOKENS — variáveis usadas pelo HTML
+========================= */
+:root {
+    --bg: #0f1117;
+
+    --surface0: #13161e;
+    --surface1: #191d28;
+    --surface2: #1f2433;
+
+    --border: #2a3142;
+    --border2: #36415a;
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+
+    /* Variáveis referenciadas no HTML inline */
+    --text: #e4e9f5;
+    --text2: #9aa4ba;
+    --text3: #6b748a;
+
+    --accent2: #3b82f6;
+
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+
+    --radius: 6px;
+    --transition: 180ms ease;
+}
+
+/* =========================
+   LAYOUT GERAL
+========================= */
+.main {
+    padding: 0 24px 40px;
+}
+
+/* =========================
+   HEADER
+========================= */
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    background: var(--surface0);
+    border-bottom: 1px solid var(--border);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-badge {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--accent2);
+    color: #fff;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.logo-text {
+    font-family: 'Syne', 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    letter-spacing: 1.5px;
+}
+
+.logo-sub {
+    font-size: 11px;
+    color: var(--text3);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text2);
+    font-weight: 500;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    display: inline-block;
+}
+
+/* =========================
+   CONTROLS BAR
+========================= */
+.controls-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 14px 24px;
+    background: var(--surface0);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.ctrl-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: opacity var(--transition);
+}
+
+.ctrl-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text3);
+    font-weight: 600;
+}
+
+.ctrl-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.controls-bar select {
+    padding: 8px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    transition: var(--transition);
+    appearance: auto;
+}
+
+.controls-bar select:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.input-cliente {
+    padding: 8px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    transition: var(--transition);
+    min-width: 180px;
+}
+
+.input-cliente:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.input-cliente::placeholder {
+    color: var(--text3);
+}
+
+.btn-export {
+    padding: 8px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text2);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-export:hover {
+    border-color: var(--border2);
+    color: var(--text);
+    background: var(--surface1);
+}
+
+/* View Toggle */
+.view-toggle {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.view-btn {
+    padding: 8px 14px;
+    background: transparent;
+    border: none;
+    color: var(--text3);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border-right: 1px solid var(--border);
+}
+
+.view-btn:last-child {
+    border-right: none;
+}
+
+.view-btn:hover {
+    color: var(--text2);
+    background: var(--surface2);
+}
+
+.view-btn.active {
+    background: var(--accent2);
+    color: #fff;
+}
+
+/* =========================
+   TABS
+========================= */
+.tab-bar {
+    display: flex;
+    gap: 0;
+    padding: 0 24px;
+    background: var(--surface0);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+}
+
+.tab {
+    padding: 12px 18px;
+    color: var(--text3);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: var(--transition);
+}
+
+.tab:hover {
+    color: var(--text2);
+}
+
+.tab.active {
+    color: var(--accent2);
+    border-bottom-color: var(--accent2);
+}
+
+/* =========================
+   SECTIONS & CARDS
+========================= */
+.section {
+    margin-top: 24px;
+}
+
+.section-title {
+    font-family: 'Syne', 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
+}
+
+/* =========================
+   CARDS — Receita e Tributos
+========================= */
+.cards-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+    .cards-wrap {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cards-panel {
+    background: var(--surface0);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+}
+
+.cards-panel-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+/* Receita Bruta grid */
+.cards-rb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+}
+
+.card-rb {
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+}
+
+.card-rb-mes {
+    grid-column: 1 / -1;
+    background: rgba(59, 130, 246, 0.06);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.card-rb-trim-atual {
+    border-color: rgba(59, 130, 246, 0.3);
+    background: rgba(59, 130, 246, 0.04);
+}
+
+.card-rb-anual {
+    grid-column: 1 / -1;
+    background: var(--surface2);
+}
+
+.card-rb-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text3);
+    margin-bottom: 4px;
+}
+
+.card-rb-label span {
+    color: var(--accent2);
+}
+
+.card-rb-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.card-rb-value-sm {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+}
+
+/* Tributos grid */
+.cards-trib-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 8px;
+}
+
+.card-trib {
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px;
+}
+
+.card-trib-total {
+    grid-column: 1 / -1;
+    background: rgba(59, 130, 246, 0.06);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.card-trib-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    margin-bottom: 4px;
+}
+
+.card-trib-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.card-trib-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+}
+
+/* =========================
+   TABLES — gerais (IRPJ, PIS, ICMS, etc.)
+========================= */
+.table-wrap {
+    overflow-x: auto;
+}
+
+.table-wrap table,
+.section table:not(.fat-grade-table):not(.sn-tributos-table):not(.year-table):not(.comp-table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.table-wrap table thead,
+.section table:not(.fat-grade-table):not(.sn-tributos-table):not(.year-table):not(.comp-table) thead {
+    background: var(--surface1);
+}
+
+.table-wrap table th,
+.section table:not(.fat-grade-table):not(.sn-tributos-table):not(.year-table):not(.comp-table) th {
+    text-align: left;
+    padding: 10px 12px;
+    color: var(--text3);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+}
+
+.table-wrap table td,
+.section table:not(.fat-grade-table):not(.sn-tributos-table):not(.year-table):not(.comp-table) td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+}
+
+.table-wrap table tr:hover,
+.section table tr:hover {
+    background: rgba(255, 255, 255, 0.015);
+}
+
+/* Alíquota column */
+.aliq {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    width: 90px;
+}
+
+/* Section header row */
+.section-header td {
+    padding: 14px 12px 8px;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent2);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+    background: rgba(59, 130, 246, 0.03);
+}
+
+/* Total row */
+.total-row td {
+    font-weight: 700;
+    color: var(--text);
+    background: rgba(59, 130, 246, 0.04);
+    border-bottom: 2px solid rgba(59, 130, 246, 0.15);
+}
+
+/* Subtraction row */
+.subtraction td {
+    color: var(--text3);
+    font-style: italic;
+}
+
+/* Badge */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.badge-blue {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent2);
+}
+
+/* =========================
+   INPUTS EDITÁVEIS
+========================= */
+.editable-input {
+    width: 100%;
+    max-width: 180px;
+    padding: 7px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    text-align: right;
+    transition: var(--transition);
+}
+
+.editable-input::placeholder {
+    color: var(--text3);
+    opacity: 0.5;
+}
+
+.editable-input:focus {
+    outline: none;
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.aliq-input {
+    width: 80px;
+    padding: 5px 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--accent2);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.aliq-input:focus {
+    outline: none;
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* Empty value */
+.empty-val {
+    color: var(--text3);
+    opacity: 0.4;
+}
+
+/* =========================
+   FATURAMENTO — Grade
+========================= */
+.fat-toggle-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.fat-toggle-hint {
+    font-size: 11px;
+    color: var(--text3);
+    margin-right: 4px;
+}
+
+.fat-toggle-btn {
+    padding: 5px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    color: var(--text3);
+    font-size: 11px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.fat-toggle-btn:hover {
+    border-color: var(--border2);
+    color: var(--text2);
+}
+
+.fat-toggle-btn.fat-toggle-on {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: var(--accent2);
+}
+
+/* Grade table */
+.fat-grade-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.fat-grade-table th {
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+    background: var(--surface1);
+}
+
+.fat-th-label {
+    text-align: left !important;
+    min-width: 160px;
+}
+
+.fat-th-total {
+    background: rgba(59, 130, 246, 0.08) !important;
+    color: var(--accent2) !important;
+}
+
+.fat-mes-atual {
+    background: rgba(59, 130, 246, 0.04);
+}
+
+th.fat-mes-atual {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: var(--accent2) !important;
+}
+
+/* Grade rows */
+.fat-row-group-start td {
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+}
+
+.fat-td-label {
+    text-align: left;
+    padding: 6px 10px;
+    color: var(--text2);
+    white-space: nowrap;
+}
+
+.fat-label-main {
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'Syne', 'Inter', sans-serif;
+}
+
+.fat-dev-label {
+    font-size: 11px;
+    color: var(--text3);
+    font-style: italic;
+    padding-left: 28px;
+}
+
+.fat-liq-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent2);
+    padding-left: 28px;
+}
+
+.fat-td-input {
+    padding: 4px 4px;
+    text-align: center;
+}
+
+.fat-td-input.fat-dev {
+    background: rgba(239, 68, 68, 0.02);
+}
+
+.fat-cell-input {
+    width: 100%;
+    max-width: 120px;
+    padding: 6px 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    text-align: right;
+    transition: var(--transition);
+}
+
+.fat-cell-input::placeholder {
+    color: var(--text3);
+    opacity: 0.35;
+}
+
+.fat-cell-input:focus {
+    outline: none;
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+    background: var(--surface1);
+}
+
+.fat-td-liq {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    padding: 6px 8px;
+}
+
+.fat-td-anual {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-weight: 600;
+    color: var(--accent2);
+    background: rgba(59, 130, 246, 0.04);
+}
+
+.fat-td-liq-anual {
+    color: var(--accent2);
+    font-weight: 700;
+}
+
+.fat-td-total {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-weight: 700;
+    color: var(--text);
+    padding: 10px 8px;
+}
+
+.fat-total-row td {
+    background: rgba(59, 130, 246, 0.04);
+    border-top: 2px solid rgba(59, 130, 246, 0.15);
+    font-weight: 700;
+}
+
+.fat-row-dev td {
+    border-bottom: none;
+}
+
+.fat-row-liq td {
+    border-bottom: none;
+}
+
+.fat-spacer td {
+    padding: 4px 0;
+    border-bottom: none;
+}
+
+/* =========================
+   YEAR TABLE (Visão Anual)
+========================= */
+.year-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.year-table th {
+    padding: 10px 6px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    border-bottom: 2px solid var(--border);
+    background: var(--surface1);
+}
+
+.year-table td {
+    padding: 8px 6px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+}
+
+.year-table .total-row td {
+    font-weight: 700;
+    color: var(--text);
+    background: rgba(59, 130, 246, 0.04);
+    border-top: 2px solid rgba(59, 130, 246, 0.15);
+}
+
+/* =========================
+   TRIMESTRAL VIEW
+========================= */
+.trim-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 1000px) {
+    .trim-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.trim-block {
+    background: var(--surface0);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.trim-block.trim-atual {
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.06);
+}
+
+.trim-header {
+    padding: 12px 16px;
+    font-family: 'Syne', 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--surface1);
+    border-bottom: 1px solid var(--border);
+}
+
+/* =========================
+   COMPARATIVO TABLE
+========================= */
+.comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.comp-table th {
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface1);
+}
+
+.comp-table td {
+    padding: 7px 5px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text2);
+}
+
+.comp-label-cell {
+    text-align: left !important;
+    font-family: 'Syne', 'Inter', sans-serif !important;
+    padding-left: 10px !important;
+    color: var(--text2) !important;
+    white-space: nowrap;
+}
+
+.comp-val-cell {
+    min-width: 50px;
+}
+
+.comp-var-cell {
+    font-size: 9px;
+    min-width: 50px;
+}
+
+.comp-pct-cell {
+    font-size: 9px;
+    min-width: 45px;
+    opacity: 0.8;
+}
+
+.comp-val-head,
+.comp-var-head,
+.comp-pct-head {
+    font-size: 8px !important;
+    padding: 4px 3px !important;
+    color: var(--text3) !important;
+}
+
+.comp-total-cell {
+    background: rgba(59, 130, 246, 0.06);
+    font-weight: 700;
+    color: var(--accent2) !important;
+}
+
+.comp-total-head {
+    background: rgba(59, 130, 246, 0.08) !important;
+    color: var(--accent2) !important;
+    min-width: 90px;
+}
+
+.comp-table .total-row td {
+    font-weight: 700;
+    color: var(--text) !important;
+    background: rgba(59, 130, 246, 0.04);
+    border-top: 2px solid rgba(59, 130, 246, 0.15);
+}
+
+/* =========================
+   SIMPLES NACIONAL
+========================= */
+.sn-anexo-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.sn-anexo-btn {
+    padding: 8px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text3);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sn-anexo-btn:hover {
+    border-color: var(--border2);
+    color: var(--text2);
+}
+
+.sn-anexo-btn.active {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: #fff;
+}
+
+.sn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 900px) {
+    .sn-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sn-input-panel,
+.sn-result-panel {
+    background: var(--surface0);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+}
+
+.sn-input-panel h3,
+.sn-result-panel h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 16px;
+}
+
+.sn-field {
+    margin-bottom: 14px;
+}
+
+.sn-field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.sn-field input {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'DM Mono', monospace;
+    text-align: right;
+    transition: var(--transition);
+}
+
+.sn-field input::placeholder {
+    color: var(--text3);
+    opacity: 0.5;
+}
+
+.sn-field input:focus {
+    outline: none;
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.sn-info-box {
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface1);
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.6;
+}
+
+.sn-faixa-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    border-radius: var(--radius);
+    color: var(--green);
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 16px;
+}
+
+.sn-aliq-efetiva {
+    text-align: center;
+    padding: 20px;
+    background: var(--surface1);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.sn-aliq-efetiva .big {
+    font-family: 'DM Mono', monospace;
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--accent2);
+    line-height: 1;
+}
+
+.sn-aliq-efetiva .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    margin-top: 6px;
+}
+
+.sn-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.sn-result-label {
+    font-size: 12px;
+    color: var(--text3);
+}
+
+.sn-result-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.sn-result-value.highlight {
+    font-size: 18px;
+    color: var(--green);
+    font-weight: 800;
+}
+
+.sn-tabela-section {
+    margin-top: 16px;
+}
+
+.sec-header {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    background: var(--surface1);
+    border-radius: var(--radius) var(--radius) 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+}
+
+.sec-header span {
+    font-weight: 400;
+    color: var(--text3);
+}
+
+.sn-tributos-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    border: 1px solid var(--border);
+}
+
+.sn-tributos-table thead {
+    background: var(--surface1);
+}
+
+.sn-tributos-table th {
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+}
+
+.sn-tributos-table td {
+    padding: 8px 12px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+}
+
+.sn-tributos-table tfoot td {
+    font-weight: 700;
+}
+
+.sn-tributos-table tr:hover {
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.sn-tributos-table .total-row td {
+    font-weight: 700;
+    color: var(--text);
+    background: rgba(59, 130, 246, 0.04);
+}
+
+/* =========================
+   IRPJ / CSLL — Tabela de Presunção Unificada
+========================= */
+.irpj-presuncao-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    border: 1px solid var(--border);
+}
+
+.irpj-presuncao-table thead {
+    background: var(--surface1);
+}
+
+.irpj-th-ativ {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    min-width: 150px;
+}
+
+.irpj-th-rb {
+    text-align: right;
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    min-width: 130px;
+}
+
+.irpj-th-group {
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+}
+
+.irpj-th-irpj {
+    color: var(--accent2);
+    background: rgba(59, 130, 246, 0.06);
+}
+
+.irpj-th-csll {
+    color: #a78bfa;
+    background: rgba(167, 139, 250, 0.06);
+}
+
+.irpj-th-sep {
+    width: 2px;
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--border);
+}
+
+.irpj-th-sub {
+    text-align: center;
+    padding: 6px 10px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid var(--border);
+}
+
+.irpj-presuncao-table tbody td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+}
+
+.irpj-ativ-label {
+    font-weight: 500;
+    color: var(--text);
+}
+
+.irpj-val {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+}
+
+.irpj-aliq {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    width: 90px;
+}
+
+.irpj-sep {
+    width: 2px;
+    padding: 0;
+    background: var(--border);
+}
+
+.irpj-presuncao-table .total-row td {
+    font-weight: 700;
+    color: var(--text);
+    background: rgba(59, 130, 246, 0.04);
+    border-top: 2px solid rgba(59, 130, 246, 0.15);
+}
+
+/* =========================
+   IRPJ / CSLL — Cards lado a lado
+========================= */
+.irpj-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 800px) {
+    .irpj-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.irpj-card {
+    background: var(--surface0);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.irpj-card-header {
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+}
+
+.irpj-card-header-ir {
+    color: var(--accent2);
+    background: rgba(59, 130, 246, 0.05);
+    border-left: 3px solid var(--accent2);
+}
+
+.irpj-card-header-cs {
+    color: #a78bfa;
+    background: rgba(167, 139, 250, 0.05);
+    border-left: 3px solid #a78bfa;
+}
+
+.irpj-card-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.irpj-card-table td {
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+}
+
+.irpj-card-table td:last-child {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+}
+
+.irpj-card-table .subtraction td {
+    color: var(--text3);
+    font-style: italic;
+}
+
+.irpj-card-total td {
+    font-weight: 700;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid var(--border2);
+}
+
+.irpj-card-resultado td {
+    font-weight: 700;
+    color: var(--text);
+    background: rgba(59, 130, 246, 0.04);
+    border-top: 2px solid rgba(59, 130, 246, 0.15);
+    font-size: 14px;
+}
+
+.irpj-resultado-valor {
+    font-size: 16px !important;
+    font-weight: 800;
+    color: var(--text) !important;
+}
+
+/* =========================
+   ANIMAÇÃO
+========================= */
+.fade-in {
+    animation: fadeIn 250ms ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================
+   PRINT
+========================= */
+/* =========================
+   PDF REPORT — estilos para relatório completo
+========================= */
+.pdf-header {
+    display: none;
+}
+
+.pdf-page-break {
+    /* apenas usado no print */
+}
+
+.pdf-full-report .pdf-section {
+    margin-bottom: 24px;
+}
+
+/* =========================
+   PRINT
+========================= */
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    @page {
+        size: A4 landscape;
+        margin: 12mm 10mm;
+    }
+
+    body {
+        background: #fff !important;
+        color: #1a1a1a !important;
+        font-size: 11px !important;
+    }
+
+    /* Esconde interface */
+    .app-header,
+    .controls-bar,
+    .tab-bar,
+    .fat-toggle-bar,
+    .btn-export,
+    .view-toggle {
+        display: none !important;
+    }
+
+    .main {
+        padding: 0 !important;
+    }
+
+    /* Mostra o cabeçalho do PDF */
+    .pdf-header {
+        display: block !important;
+        text-align: center;
+        padding: 10px 0 16px;
+        border-bottom: 2px solid #333;
+        margin-bottom: 16px;
+    }
+
+    .pdf-header-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #111;
+        letter-spacing: 1px;
+    }
+
+    .pdf-header-sub {
+        font-size: 11px;
+        color: #555;
+        margin-top: 4px;
+    }
+
+    /* Quebras de página */
+    .pdf-page-break {
+        page-break-before: always;
+    }
+
+    .pdf-section {
+        page-break-inside: avoid;
+        margin-bottom: 14px;
+    }
+
+    .section {
+        page-break-inside: avoid;
+    }
+
+    /* Cores de fundo para print */
+    .cards-panel,
+    .card-rb,
+    .card-trib,
+    .sn-input-panel,
+    .sn-result-panel,
+    .irpj-card,
+    .trim-block {
+        background: #fff !important;
+        border-color: #ccc !important;
+    }
+
+    .irpj-card-header-ir {
+        background: #eef4ff !important;
+        border-left-color: #3b82f6 !important;
+        color: #1d4ed8 !important;
+    }
+
+    .irpj-card-header-cs {
+        background: #f3f0ff !important;
+        border-left-color: #8b5cf6 !important;
+        color: #6d28d9 !important;
+    }
+
+    .section-title {
+        color: #111 !important;
+        font-size: 13px !important;
+    }
+
+    /* Tabelas */
+    table, .irpj-presuncao-table, .sn-tributos-table,
+    .fat-grade-table, .year-table, .comp-table {
+        border-color: #ccc !important;
+    }
+
+    th {
+        background: #f5f5f5 !important;
+        color: #333 !important;
+    }
+
+    td {
+        color: #1a1a1a !important;
+        border-color: #ddd !important;
+    }
+
+    .total-row td,
+    .irpj-card-total td,
+    .irpj-card-resultado td {
+        background: #eef4ff !important;
+        color: #111 !important;
+        border-color: #aac5f0 !important;
+    }
+
+    .section-header td {
+        background: #eef4ff !important;
+        color: #1d4ed8 !important;
+    }
+
+    .subtraction td {
+        color: #666 !important;
+    }
+
+    /* Inputs viram texto no print */
+    .editable-input,
+    .fat-cell-input,
+    .aliq-input,
+    .sn-field input {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        color: #111 !important;
+        box-shadow: none !important;
+    }
+
+    /* Cards grid */
+    .irpj-cards-grid,
+    .cards-wrap {
+        gap: 12px !important;
+    }
+
+    /* Esconde coisas desnecessárias no print */
+    .sn-anexo-tabs,
+    .fade-in {
+        animation: none !important;
+    }
+
+    /* Badge */
+    .badge-blue {
+        background: #e0edff !important;
+        color: #1d4ed8 !important;
+    }
+
+    /* Variáveis overrides para print */
+    .irpj-val, .card-rb-value, .card-rb-value-sm,
+    .card-trib-value, .irpj-resultado-valor {
+        color: #111 !important;
+    }
+
+    .irpj-ativ-label {
+        color: #222 !important;
+    }
+
+    /* Carga da barra totalizadora PIS/COFINS */
+    .pdf-full-report > .pdf-section {
+        margin-bottom: 8px;
+    }
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border2);
+}
+
+
+
+/* ────────────────────────────────────────────
+ * SUPABASE — Seletor de cliente + header info
+ * ──────────────────────────────────────────── */
+
+/* Wrapper do input de cliente com posicionamento relativo para o dropdown */
+.cliente-wrapper {
+  position: relative;
+}
+
+/* Input de cliente — estilo padrão do sistema */
+.input-cliente {
+  background: var(--surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 6px var(--space-3);
+  font-size: 12px;
+  font-family: var(--font-ui);
+  outline: none;
+  width: 220px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.input-cliente:focus {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* Dropdown de autocomplete */
+#cliente-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 340px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  z-index: 9999;
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.cli-drop-item {
+  padding: 10px var(--space-4);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition-fast);
+}
+.cli-drop-item:last-child { border-bottom: none; }
+.cli-drop-item:hover,
+.cli-drop-item.focused {
+  background: var(--blue-100);
+}
+.cli-drop-nome {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  margin-bottom: 2px;
+}
+.cli-drop-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-family: var(--font-data);
+}
+.cli-drop-loading,
+.cli-drop-empty {
+  padding: 14px var(--space-4);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-align: center;
+  font-family: var(--font-ui);
+}
+
+/* Bloco de informações do cliente no header */
+#cliente-info-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cli-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cli-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.cli-tag {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-family: var(--font-data);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 1px 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.cli-tag strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.cli-regime {
+  background: var(--blue-100);
+  border-color: rgba(59,130,246,0.2);
+  color: var(--blue-400);
+}
+.cli-regime strong { color: var(--blue-400); }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="logo">
+    <div class="logo-badge">GT</div>
+    <div>
+      <div class="logo-text">GTCON</div>
+      <div class="logo-sub">Memória de Cálculo Fiscal</div>
+    </div>
+  </div>
+
+  <!-- Dados do cliente ativo — preenchido pelo Supabase -->
+  <div id="cliente-info-header" style="flex:1;padding:0 32px">
+    <div class="cli-nome">Selecione um cliente</div>
+  </div>
+
+  <div class="header-right">
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      <span id="status-regime">–</span>
+    </div>
+  </div>
+</header>
+
+<!-- CONTROLS -->
+<div class="controls-bar">
+  <div class="ctrl-group">
+    <div class="ctrl-label">Empresa / Cliente</div>
+    <div class="cliente-wrapper">
+      <input type="text" id="sel-cliente" class="input-cliente" placeholder="Buscar empresa..." autocomplete="off">
+      <div id="cliente-dropdown"></div>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <div class="ctrl-label">Ano-Calendário</div>
+    <div class="ctrl-row">
+      <select id="sel-ano">
+        <option value="2030">2030</option>
+        <option value="2029">2029</option>
+        <option value="2028">2028</option>
+        <option value="2027">2027</option>
+        <option value="2026">2026</option>
+        <option value="2025" selected>2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2021">2021</option>
+        <option value="2020">2020</option>
+      </select>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <div class="ctrl-label">Mês de Competência</div>
+    <select id="sel-mes">
+      <option value="0">Janeiro</option>
+      <option value="1">Fevereiro</option>
+      <option value="2">Março</option>
+      <option value="3">Abril</option>
+      <option value="4">Maio</option>
+      <option value="5">Junho</option>
+      <option value="6">Julho</option>
+      <option value="7">Agosto</option>
+      <option value="8">Setembro</option>
+      <option value="9">Outubro</option>
+      <option value="10">Novembro</option>
+      <option value="11">Dezembro</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <div class="ctrl-label">Visão</div>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="setView('mensal')">Mensal</button>
+      <button class="view-btn" onclick="setView('trimestral')">Trimestral</button>
+      <button class="view-btn" onclick="setView('anual')">Anual</button>
+      <button class="view-btn" onclick="setView('comparativo')">Comparativo</button>
+    </div>
+  </div>
+  <div class="ctrl-group" style="margin-left:auto">
+    <div class="ctrl-label">Ações</div>
+    <div class="ctrl-row">
+      <button class="btn-export" onclick="generatePDF()">Imprimir / PDF</button>
+      <button class="btn-export" onclick="exportCSV()">Exportar CSV</button>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <div class="tab active" onclick="setTab('faturamento')">Faturamento</div>
+  <div class="tab" onclick="setTab('irpj')">IRPJ / CSLL</div>
+  <div class="tab" onclick="setTab('pis')">PIS / COFINS</div>
+  <div class="tab" onclick="setTab('icms')">ICMS</div>
+  <div class="tab" onclick="setTab('icms_ant')">ICMS Antecipação</div>
+  <div class="tab" onclick="setTab('ipi')">IPI</div>
+  <div class="tab" onclick="setTab('icms_st')">ICMS-ST</div>
+  <div class="tab" onclick="setTab('difal')">ICMS DIFAL</div>
+  <div class="tab" onclick="setTab('resumo')">Resumo Geral</div>
+  <div class="tab" style="color:var(--green);border-color:transparent" onclick="setTab('simples')">Simples Nacional</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div id="content-area"></div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────────
+const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+let currentTab = 'faturamento';
+let currentView = 'mensal';
+let currentMes = parseInt(document.getElementById('sel-mes').value);
+let currentAno = parseInt(document.getElementById('sel-ano').value);
+
+// ──────────────────────────────────────────────
+// DATA STORE — indexed by [ano][mes][sheet][field]
+// ──────────────────────────────────────────────
+const store = {};
+
+function getStore() {
+  const ano = currentAno;
+  if (!store[ano]) store[ano] = {};
+  for (let m = 0; m < 12; m++) {
+    if (!store[ano][m]) store[ano][m] = initData();
+  }
+  return store[ano];
+}
+
+function initData() {
+  return {
+    fat: {
+      comercio: 0, dev_comercio: 0,
+      industria: 0, dev_industria: 0,
+      servicos_gerais: 0, dev_servicos: 0,
+      serv_hosp: 0, dev_serv_hosp: 0,
+      transp_pass: 0, dev_transp_pass: 0,
+      transp_carga: 0, dev_transp_carga: 0,
+      loc_imob: 0, dev_loc_imob: 0,
+      at_rural: 0, dev_at_rural: 0,
+      outras_receitas: 0,
+    },
+    irpj: {
+      // Alíquotas de presunção IRPJ por atividade
+      aliq_irpj_comercio: 0.08,
+      aliq_irpj_industria: 0.08,
+      aliq_irpj_serv_gerais: 0.32,
+      aliq_irpj_serv_hosp: 0.08,
+      aliq_irpj_transp_pass: 0.16,
+      aliq_irpj_transp_carga: 0.08,
+      aliq_irpj_loc_imob: 0.32,
+      aliq_irpj_at_rural: 0.08,
+      // Alíquotas de presunção CSLL por atividade
+      aliq_csll_comercio: 0.12,
+      aliq_csll_industria: 0.12,
+      aliq_csll_serv_gerais: 0.32,
+      aliq_csll_serv_hosp: 0.12,
+      aliq_csll_transp_pass: 0.12,
+      aliq_csll_transp_carga: 0.12,
+      aliq_csll_loc_imob: 0.32,
+      aliq_csll_at_rural: 0.12,
+      ret_irpj: 0, ret_csll: 0,
+    },
+    pis: {
+      excl_monofasia: 0, excl_st: 0, excl_aliq_zero: 0,
+      excl_isenta: 0, excl_exterior: 0,
+      ret_pis: 0, saldo_ant_pis: 0,
+      ret_cofins: 0, saldo_ant_cofins: 0,
+      aliq_pis: 0.0065, aliq_cofins: 0.03,
+    },
+    icms: {
+      bc_12_int: 0, bc_17_int: 0, bc_18_int: 0, bc_25_int: 0,
+      bc_4_inter: 0, bc_7_inter: 0, bc_12_inter: 0,
+      outros_debitos: 0,
+      cred_mercadoria: 0, cred_insumo: 0, cred_ativo: 0,
+      cred_energia: 0, cred_comunicacao: 0, outros_creditos: 0,
+      estorno_debito: 0,
+      bc_fecp: 0, cred_fecp: 0, saldo_fecp_ant: 0,
+      saldo_credor_ant: 0,
+      aliq_fecp: 0.02,
+    },
+    icms_ant: {
+      valor_entradas: 0,
+      aliq_interestadual: 0.12, aliq_interna: 0.18,
+      bc_ant: 0,
+      ant_recolhidas: 0, outros_creditos: 0,
+    },
+    ipi: {
+      bc_0: 0, bc_5: 0, bc_10: 0, bc_15: 0, bc_20: 0, bc_25: 0,
+      outros_debitos: 0,
+      cred_mp: 0, cred_pi: 0, cred_me: 0, outros_cred: 0, saldo_transf: 0,
+      bc_import: 0, aliq_import: 0.10, ipi_equiv_int: 0,
+      dev_venda: 0, dev_compra: 0,
+      saldo_credor_ant: 0,
+    },
+    icms_st: {
+      bc_proprio: 0, mva: 0.40, aliq_interna: 0.18, aliq_inter: 0.12,
+      icms_st_cobrado: 0, compl_st: 0, ressarc: 0,
+      dev_compra: 0, dev_venda: 0,
+      gnre_recolhido: 0, saldo_ant: 0,
+    },
+    difal: {
+      bc_entradas: 0, aliq_destino: 0.18, aliq_origem: 0.12,
+      partilha_destino: 1.00, partilha_origem: 0.00,
+      bc_b2c: 0, aliq_destino_b2c: 0.18, aliq_origem_b2c: 0.12,
+      aliq_fecp_b2c: 0.02,
+      gnre_recolhido: 0, dev_cancel: 0, saldo_ant: 0,
+    }
+  };
+}
+
+// ──────────────────────────────────────────────
+// COMPUTED
+// ──────────────────────────────────────────────
+function compute(d) {
+  const f = d.fat;
+  // Faturamento totals
+  f.total_comercio = (f.comercio||0) - (f.dev_comercio||0);
+  f.total_industria = (f.industria||0) - (f.dev_industria||0);
+  f.total_serv_gerais = (f.servicos_gerais||0) - (f.dev_servicos||0);
+  f.total_serv_hosp = (f.serv_hosp||0) - (f.dev_serv_hosp||0);
+  f.total_transp_pass = (f.transp_pass||0) - (f.dev_transp_pass||0);
+  f.total_transp_carga = (f.transp_carga||0) - (f.dev_transp_carga||0);
+  f.total_loc_imob = (f.loc_imob||0) - (f.dev_loc_imob||0);
+  f.total_at_rural = (f.at_rural||0) - (f.dev_at_rural||0);
+  f.receita_bruta_total = f.total_comercio + f.total_industria + f.total_serv_gerais +
+    f.total_serv_hosp + f.total_transp_pass + f.total_transp_carga +
+    f.total_loc_imob + f.total_at_rural;
+
+  // IRPJ — base presumida por atividade
+  const irpj = d.irpj, fat = d.fat;
+
+  // Atividades com suas receitas líquidas e alíquotas IRPJ/CSLL
+  const ATIVS_IRPJ = [
+    { key:'comercio',    rb: fat.total_comercio,      aliqIR:'aliq_irpj_comercio',    aliqCS:'aliq_csll_comercio' },
+    { key:'industria',   rb: fat.total_industria,     aliqIR:'aliq_irpj_industria',   aliqCS:'aliq_csll_industria' },
+    { key:'serv_gerais', rb: fat.total_serv_gerais,   aliqIR:'aliq_irpj_serv_gerais', aliqCS:'aliq_csll_serv_gerais' },
+    { key:'serv_hosp',   rb: fat.total_serv_hosp,     aliqIR:'aliq_irpj_serv_hosp',   aliqCS:'aliq_csll_serv_hosp' },
+    { key:'transp_pass', rb: fat.total_transp_pass,   aliqIR:'aliq_irpj_transp_pass', aliqCS:'aliq_csll_transp_pass' },
+    { key:'transp_carga',rb: fat.total_transp_carga,  aliqIR:'aliq_irpj_transp_carga',aliqCS:'aliq_csll_transp_carga' },
+    { key:'loc_imob',    rb: fat.total_loc_imob,      aliqIR:'aliq_irpj_loc_imob',    aliqCS:'aliq_csll_loc_imob' },
+    { key:'at_rural',    rb: fat.total_at_rural,      aliqIR:'aliq_irpj_at_rural',    aliqCS:'aliq_csll_at_rural' },
+  ];
+
+  // Calcula base presumida IRPJ e CSLL por atividade
+  irpj._ativs = ATIVS_IRPJ.map(a => ({
+    key: a.key,
+    rb: a.rb || 0,
+    aliqIR: irpj[a.aliqIR] || 0,
+    baseIR: (a.rb || 0) * (irpj[a.aliqIR] || 0),
+    aliqCS: irpj[a.aliqCS] || 0,
+    baseCS: (a.rb || 0) * (irpj[a.aliqCS] || 0),
+  }));
+
+  irpj.total_base_irpj_ativs = irpj._ativs.reduce((s,a) => s + a.baseIR, 0);
+  irpj.total_base_csll_ativs = irpj._ativs.reduce((s,a) => s + a.baseCS, 0);
+
+  irpj.base_calc_irpj = irpj.total_base_irpj_ativs + (fat.outras_receitas||0);
+  irpj.irpj_15 = irpj.base_calc_irpj * 0.15;
+  const adicional_base = Math.max(0, irpj.base_calc_irpj - 20000);
+  irpj.irpj_adicional = adicional_base * 0.10;
+  irpj.irpj_pagar = Math.max(0, irpj.irpj_15 + irpj.irpj_adicional - (irpj.ret_irpj||0));
+
+  irpj.base_calc_csll = irpj.total_base_csll_ativs + (fat.outras_receitas||0);
+  irpj.csll_9 = irpj.base_calc_csll * 0.09;
+  irpj.csll_pagar = Math.max(0, irpj.csll_9 - (irpj.ret_csll||0));
+
+  // PIS/COFINS
+  const pis = d.pis;
+  const rb = fat.receita_bruta_total;
+  pis.rb_total = rb;
+  pis.total_exclusoes = (pis.excl_monofasia||0)+(pis.excl_st||0)+(pis.excl_aliq_zero||0)+(pis.excl_isenta||0)+(pis.excl_exterior||0);
+  pis.base_calc = Math.max(0, rb - pis.total_exclusoes);
+  pis.pis_apurado = pis.base_calc * (pis.aliq_pis||0.0065);
+  pis.pis_pagar = Math.max(0, pis.pis_apurado - (pis.ret_pis||0) - (pis.saldo_ant_pis||0));
+  pis.cofins_apurado = pis.base_calc * (pis.aliq_cofins||0.03);
+  pis.cofins_pagar = Math.max(0, pis.cofins_apurado - (pis.ret_cofins||0) - (pis.saldo_ant_cofins||0));
+  pis.total_pagar = pis.pis_pagar + pis.cofins_pagar;
+
+  // ICMS
+  const icms = d.icms;
+  icms.deb_12_int = (icms.bc_12_int||0) * 0.12;
+  icms.deb_17_int = (icms.bc_17_int||0) * 0.17;
+  icms.deb_18_int = (icms.bc_18_int||0) * 0.18;
+  icms.deb_25_int = (icms.bc_25_int||0) * 0.25;
+  icms.deb_4_inter = (icms.bc_4_inter||0) * 0.04;
+  icms.deb_7_inter = (icms.bc_7_inter||0) * 0.07;
+  icms.deb_12_inter = (icms.bc_12_inter||0) * 0.12;
+  icms.total_debitos = icms.deb_12_int+icms.deb_17_int+icms.deb_18_int+icms.deb_25_int+
+    icms.deb_4_inter+icms.deb_7_inter+icms.deb_12_inter+(icms.outros_debitos||0);
+  icms.total_creditos = (icms.cred_mercadoria||0)+(icms.cred_insumo||0)+(icms.cred_ativo||0)+
+    (icms.cred_energia||0)+(icms.cred_comunicacao||0)+(icms.outros_creditos||0)+(icms.estorno_debito||0);
+  icms.fecp_apurado = (icms.bc_fecp||0) * (icms.aliq_fecp||0.02);
+  icms.fecp_recolher = Math.max(0, icms.fecp_apurado-(icms.cred_fecp||0)-(icms.saldo_fecp_ant||0));
+  const saldo_periodo = icms.total_debitos - icms.total_creditos;
+  icms.saldo_apuracao = saldo_periodo - (icms.saldo_credor_ant||0);
+  icms.icms_pagar = Math.max(0, icms.saldo_apuracao);
+  icms.saldo_credor = Math.max(0, -icms.saldo_apuracao);
+
+  // ICMS Antecipação
+  const ant = d.icms_ant;
+  ant.icms_origem = (ant.valor_entradas||0) * (ant.aliq_interestadual||0.12);
+  ant.icms_interna = (ant.bc_ant||0) * (ant.aliq_interna||0.18);
+  ant.icms_antecipado = Math.max(0, ant.icms_interna - ant.icms_origem);
+  ant.antec_recolher = Math.max(0, ant.icms_antecipado-(ant.ant_recolhidas||0)-(ant.outros_creditos||0));
+
+  // IPI
+  const ipi = d.ipi;
+  ipi.deb_0 = (ipi.bc_0||0)*0;
+  ipi.deb_5 = (ipi.bc_5||0)*0.05;
+  ipi.deb_10 = (ipi.bc_10||0)*0.10;
+  ipi.deb_15 = (ipi.bc_15||0)*0.15;
+  ipi.deb_20 = (ipi.bc_20||0)*0.20;
+  ipi.deb_25 = (ipi.bc_25||0)*0.25;
+  ipi.total_debitos = ipi.deb_5+ipi.deb_10+ipi.deb_15+ipi.deb_20+ipi.deb_25+(ipi.outros_debitos||0);
+  ipi.total_creditos = (ipi.cred_mp||0)+(ipi.cred_pi||0)+(ipi.cred_me||0)+(ipi.outros_cred||0)+(ipi.saldo_transf||0);
+  ipi.ipi_import = (ipi.bc_import||0)*(ipi.aliq_import||0.10);
+  ipi.total_equiv = ipi.ipi_import+(ipi.ipi_equiv_int||0);
+  const saldo_ipi = ipi.total_debitos - ipi.total_creditos + ipi.total_equiv - (ipi.dev_venda||0) + (ipi.dev_compra||0);
+  ipi.saldo_apuracao = saldo_ipi - (ipi.saldo_credor_ant||0);
+  ipi.ipi_pagar = Math.max(0, ipi.saldo_apuracao);
+
+  // ICMS-ST
+  const st = d.icms_st;
+  st.bc_st = (st.bc_proprio||0)*(1+(st.mva||0.40));
+  st.icms_st_bruto = st.bc_st*(st.aliq_interna||0.18);
+  st.icms_proprio = (st.bc_proprio||0)*(st.aliq_inter||0.12);
+  st.st_reter = Math.max(0, st.icms_st_bruto - st.icms_proprio);
+  st.st_liquida = (st.icms_st_cobrado||0)+(st.compl_st||0)-(st.ressarc||0)-(st.dev_compra||0)+(st.dev_venda||0);
+  st.st_recolher = Math.max(0, st.st_liquida-(st.gnre_recolhido||0)-(st.saldo_ant||0));
+  st.saldo_recuperar = Math.max(0, (st.gnre_recolhido||0)+(st.saldo_ant||0)-st.st_liquida);
+
+  // DIFAL
+  const dif = d.difal;
+  dif.difal_entradas = (dif.bc_entradas||0)*((dif.aliq_destino||0.18)-(dif.aliq_origem||0.12));
+  dif.difal_destino = dif.difal_entradas*(dif.partilha_destino||1);
+  dif.difal_origem = dif.difal_entradas*(dif.partilha_origem||0);
+  dif.difal_b2c = (dif.bc_b2c||0)*((dif.aliq_destino_b2c||0.18)-(dif.aliq_origem_b2c||0.12));
+  dif.fecp_b2c = (dif.bc_b2c||0)*(dif.aliq_fecp_b2c||0.02);
+  dif.total_b2c = dif.difal_b2c + dif.fecp_b2c;
+  const bruto = dif.difal_destino + dif.total_b2c;
+  dif.total_bruto = bruto;
+  dif.difal_recolher = Math.max(0, bruto-(dif.gnre_recolhido||0)-(dif.dev_cancel||0)-(dif.saldo_ant||0));
+  dif.saldo_recuperar = Math.max(0, (dif.gnre_recolhido||0)-(bruto));
+
+  return d;
+}
+
+function getD(mes) {
+  return compute(getStore()[mes]);
+}
+
+// ──────────────────────────────────────────────
+// FORMAT
+// ──────────────────────────────────────────────
+function fmt(v, fallback='–') {
+  if (v === null || v === undefined || isNaN(v)) return `<span class="empty-val">${fallback}</span>`;
+  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtPct(v) {
+  if (v === null || v === undefined || isNaN(v)) return '–';
+  return (v*100).toFixed(2).replace('.',',') + '%';
+}
+function fmtNum(v) {
+  if (!v) return '0';
+  return v.toLocaleString('pt-BR', {minimumFractionDigits:2});
+}
+
+// ──────────────────────────────────────────────
+// INPUT HELPER
+// ──────────────────────────────────────────────
+function inp(tab, field, mes, cls='') {
+  const d = getStore()[mes];
+  const val = d[tab][field] || 0;
+  const id = `inp_${tab}_${field}_${mes}`;
+  const displayVal = val.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  return `<input class="editable-input ${cls}" id="${id}" value="${displayVal}" placeholder="0,00"
+    onchange="setVal('${tab}','${field}',${mes},this.value)" 
+    onkeyup="if(event.key==='Enter'||event.key==='Tab')setVal('${tab}','${field}',${mes},this.value)">`;
+}
+
+function inpAliq(tab, field, mes) {
+  const d = getStore()[mes];
+  const val = d[tab][field] || 0;
+  const id = `ia_${tab}_${field}_${mes}`;
+  return `<input class="aliq-input" id="${id}" value="${fmtPct(val)}"
+    onchange="setAliq('${tab}','${field}',${mes},this.value)">`;
+}
+
+function setVal(tab, field, mes, raw) {
+  const num = parseFloat(raw.replace(/\./g,'').replace(',','.'));
+  if (!isNaN(num)) {
+    getStore()[mes][tab][field] = num;
+  }
+  render();
+}
+
+function setAliq(tab, field, mes, raw) {
+  const num = parseFloat(raw.replace('%','').replace(',','.')) / 100;
+  if (!isNaN(num)) {
+    getStore()[mes][tab][field] = num;
+  }
+  render();
+}
+
+// ──────────────────────────────────────────────
+// VIEWS
+// ──────────────────────────────────────────────
+function setView(v) {
+  currentView = v;
+  document.querySelectorAll('.view-btn').forEach(b => {
+    const txt = b.textContent.trim().toLowerCase();
+    b.classList.toggle('active', txt === v.toLowerCase());
+  });
+  render();
+}
+function setTab(t) {
+  currentTab = t;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.getAttribute('onclick').includes("'"+t+"'")));
+  // Hide/show controls-bar month selectors when on Simples Nacional
+  const ctrlsMes = document.querySelectorAll('#sel-mes, #sel-ano, .view-toggle, .ctrl-group:nth-child(3)');
+  if (t === 'simples') {
+    document.querySelectorAll('.ctrl-group').forEach((el,i)=>{ if(i>=1) el.style.opacity='0.35'; });
+  } else {
+    document.querySelectorAll('.ctrl-group').forEach(el=>el.style.opacity='');
+  }
+  render();
+}
+
+document.getElementById('sel-mes').onchange = function() { currentMes = parseInt(this.value); render(); };
+document.getElementById('sel-ano').onchange = function() { currentAno = parseInt(this.value); render(); };
+
+// ──────────────────────────────────────────────
+// CARDS — versão com painel de faturamento contextual
+// ──────────────────────────────────────────────
+function buildCards(mes) {
+  const d = getD(mes);
+
+  // ── Bloco 1: Receitas ────────────────────────
+  const t1rb = [0,1,2].reduce((a,m)=>a+getD(m).fat.receita_bruta_total,0);
+  const t2rb = [3,4,5].reduce((a,m)=>a+getD(m).fat.receita_bruta_total,0);
+  const t3rb = [6,7,8].reduce((a,m)=>a+getD(m).fat.receita_bruta_total,0);
+  const t4rb = [9,10,11].reduce((a,m)=>a+getD(m).fat.receita_bruta_total,0);
+  const anualRB = t1rb+t2rb+t3rb+t4rb;
+  const trimAtual = Math.floor(mes/3);
+  const trimLabels = ['1º Trim','2º Trim','3º Trim','4º Trim'];
+  const trimVals   = [t1rb,t2rb,t3rb,t4rb];
+
+  // ── Bloco 2: Tributos ────────────────────────
+  const tributos = [
+    { label:'IRPJ',        value: d.irpj.irpj_pagar },
+    { label:'CSLL',        value: d.irpj.csll_pagar },
+    { label:'PIS+COFINS',  value: d.pis.total_pagar },
+    { label:'ICMS+FECP',   value: d.icms.icms_pagar+d.icms.fecp_recolher },
+    { label:'IPI',         value: d.ipi.ipi_pagar },
+    { label:'ICMS-ST',     value: d.icms_st.st_recolher },
+    { label:'DIFAL',       value: d.difal.difal_recolher },
+  ];
+  const totalImp = tributos.reduce((a,c)=>a+(c.value||0),0);
+  const rb = d.fat.receita_bruta_total;
+  const cargaPct = rb > 0 ? ((totalImp/rb)*100).toFixed(1)+'%' : '–';
+
+  return `
+    <div class="cards-wrap">
+
+      <!-- ── Painel Receita ── -->
+      <div class="cards-panel cards-panel-rb">
+        <div class="cards-panel-title">Receita Bruta</div>
+        <div class="cards-rb-grid">
+          <div class="card-rb card-rb-mes">
+            <div class="card-rb-label">Mês Atual<br><span>${MONTHS[mes]}</span></div>
+            <div class="card-rb-value">${fmt(rb)}</div>
+          </div>
+          ${trimVals.map((v,i)=>`
+            <div class="card-rb ${i===trimAtual?'card-rb-trim-atual':'card-rb-trim'}">
+              <div class="card-rb-label">${trimLabels[i]}</div>
+              <div class="card-rb-value-sm">${fmt(v)}</div>
+            </div>`).join('')}
+          <div class="card-rb card-rb-anual">
+            <div class="card-rb-label">Receita Anual<br><span>${currentAno}</span></div>
+            <div class="card-rb-value">${fmt(anualRB)}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Painel Tributos ── -->
+      <div class="cards-panel cards-panel-trib">
+        <div class="cards-panel-title">Tributos a Pagar — ${MONTHS[mes]}</div>
+        <div class="cards-trib-grid">
+          ${tributos.map(c=>`
+            <div class="card-trib">
+              <div class="card-trib-label">${c.label}</div>
+              <div class="card-trib-value">${fmt(c.value)}</div>
+            </div>`).join('')}
+          <div class="card-trib card-trib-total">
+            <div class="card-trib-label">Total Impostos</div>
+            <div class="card-trib-value">${fmt(totalImp)}</div>
+            <div class="card-trib-sub">Carga: ${cargaPct}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// FATURAMENTO — grade mensal 12 meses × atividades
+// ──────────────────────────────────────────────
+// Estrutura: linhas = atividades, colunas = meses
+// Permite preencher todos os meses de uma vez na visão anual/faturamento
+// ou focar no mês selecionado na visão mensal.
+
+const FAT_ATIVIDADES = [
+  { key:'comercio',        label:'Comércio',              icon:'', dev:'dev_comercio',    defaultOn:true  },
+  { key:'industria',       label:'Indústria',             icon:'', dev:'dev_industria',   defaultOn:false },
+  { key:'servicos_gerais', label:'Serviços Gerais',       icon:'', dev:'dev_servicos',    defaultOn:false },
+  { key:'serv_hosp',       label:'Serv. Hospitalares',    icon:'', dev:'dev_serv_hosp',   defaultOn:false },
+  { key:'transp_pass',     label:'Transp. Passageiros',   icon:'', dev:'dev_transp_pass', defaultOn:false },
+  { key:'transp_carga',    label:'Transp. de Carga',      icon:'', dev:'dev_transp_carga',defaultOn:false },
+  { key:'loc_imob',        label:'Loc. Imobiliária',      icon:'', dev:'dev_loc_imob',    defaultOn:false },
+  { key:'at_rural',        label:'Ativ. Rural',           icon:'', dev:'dev_at_rural',    defaultOn:false },
+  { key:'outras_receitas', label:'Outras Receitas',       icon:'', dev:null,              defaultOn:true  },
+];
+
+// Quais atividades estão ativas (persistente entre renders)
+let fatAtivas = new Set(FAT_ATIVIDADES.filter(a=>a.defaultOn).map(a=>a.key));
+
+function fatToggle(key) {
+  if (fatAtivas.has(key)) {
+    // Impede desativar se tem dados nesse campo
+    const temDado = Array.from({length:12},(_,m)=>getStore()[m].fat[key]||0).some(v=>v>0);
+    if (temDado) { /* mantém ativa se tem dado */ }
+    else fatAtivas.delete(key);
+  } else {
+    fatAtivas.add(key);
+  }
+  render();
+}
+
+// Salvar sem re-render completo (preserva foco)
+function fatSetVal(field, mes, raw) {
+  const num = parseFloat((raw||'').replace(/\./g,'').replace(',','.'));
+  if (!isNaN(num)) {
+    getStore()[mes]['fat'][field] = num;
+    // Se preencheu, ativa a atividade automaticamente
+    const at = FAT_ATIVIDADES.find(a=>a.key===field||a.dev===field);
+    if (at && num > 0) fatAtivas.add(at.key);
+  }
+  // Atualiza totais inline sem re-render
+  getD(mes); // força compute
+  _updateFatInlineTotals(mes);
+}
+
+function _updateFatInlineTotals(mes) {
+  const d = getD(mes);
+  // Líquidos por atividade
+  FAT_ATIVIDADES.filter(a=>fatAtivas.has(a.key)).forEach(at=>{
+    const liqEl = document.getElementById(`fat_liq_${at.key}_${mes}`);
+    if (liqEl) {
+      const liq = at.dev
+        ? (d.fat[at.key]||0)-(d.fat[at.dev]||0)
+        : (d.fat[at.key]||0);
+      liqEl.textContent = 'R$ '+liq.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+  });
+  // Total do mês
+  const totEl = document.getElementById(`fat_col_total_${mes}`);
+  if (totEl) totEl.textContent = 'R$ '+d.fat.receita_bruta_total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function fmtText(v) {
+  if (v === null || v === undefined || isNaN(v)) return '–';
+  return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function fatInp(field, mes) {
+  const d = getStore()[mes];
+  const val = d.fat[field] || 0;
+  const id  = `fat_inp_${field}_${mes}`;
+  const disp = val.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return `<input class="fat-cell-input" id="${id}" value="${disp}" placeholder="–"
+    onblur="fatSetVal('${field}',${mes},this.value)"
+    onkeydown="fatNavKey(event,'${field}',${mes})">`;
+}
+
+function fatNavKey(e, field, mes) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const nextMes = (mes + 1) % 12;
+    const next = document.getElementById(`fat_inp_${field}_${nextMes}`);
+    if (next) next.focus();
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    // Próxima atividade ativa
+    const atArr = FAT_ATIVIDADES.filter(a=>fatAtivas.has(a.key));
+    const idx = atArr.findIndex(a=>a.key===field||a.dev===field);
+    const next = atArr[idx+1];
+    if (next) { const el=document.getElementById(`fat_inp_${next.key}_${mes}`); if(el) el.focus(); }
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const atArr = FAT_ATIVIDADES.filter(a=>fatAtivas.has(a.key));
+    const idx = atArr.findIndex(a=>a.key===field||a.dev===field);
+    const prev = atArr[idx-1];
+    if (prev) { const el=document.getElementById(`fat_inp_${prev.key}_${mes}`); if(el) el.focus(); }
+  }
+}
+
+function buildFaturamentoGrade() {
+  const mesesVisiveis = currentView === 'mensal'
+    ? [currentMes]
+    : currentView === 'trimestral'
+      ? [0,1,2,3,4,5,6,7,8,9,10,11].filter(m=>Math.floor(m/3)===Math.floor(currentMes/3)) // trimestre atual
+      : Array.from({length:12},(_,i)=>i);
+
+  const showAnual = currentView !== 'mensal';
+  const atAtivasArr = FAT_ATIVIDADES.filter(a=>fatAtivas.has(a.key));
+
+  // ── Botões de seleção de atividades ──
+  const toggleButtons = FAT_ATIVIDADES.map(at=>{
+    const ativa = fatAtivas.has(at.key);
+    const temDado = Array.from({length:12},(_,m)=>getStore()[m].fat[at.key]||0).some(v=>v>0);
+    return `<button class="fat-toggle-btn ${ativa?'fat-toggle-on':''}" onclick="fatToggle('${at.key}')">
+      ${at.label}${temDado?' *':''}
+    </button>`;
+  }).join('');
+
+  // ── Cabeçalhos de colunas ──
+  const mesHeaders = mesesVisiveis.map(m=>`
+    <th class="fat-th-mes${m===currentMes?' fat-mes-atual':''}">${currentView==='mensal'?MONTHS[m]:MONTHS_SHORT[m]}</th>`).join('');
+  const anualTh = showAnual ? `<th class="fat-th-total">Total</th>` : '';
+
+  // ── Linhas das atividades ──
+  const linhas = atAtivasArr.map(at=>{
+    const hasDev = at.dev !== null;
+
+    const cellsBruto = mesesVisiveis.map(m=>`
+      <td class="fat-td-input${m===currentMes?' fat-mes-atual':''}">${fatInp(at.key, m)}</td>`).join('');
+
+    const anualBruto = showAnual
+      ? Array.from({length:12},(_,m)=>getStore()[m].fat[at.key]||0).reduce((a,b)=>a+b,0)
+      : 0;
+
+    let devRow = '';
+    if (hasDev) {
+      const cellsDev = mesesVisiveis.map(m=>`
+        <td class="fat-td-input fat-dev${m===currentMes?' fat-mes-atual':''}">${fatInp(at.dev, m)}</td>`).join('');
+      const anualDev = showAnual
+        ? Array.from({length:12},(_,m)=>getStore()[m].fat[at.dev]||0).reduce((a,b)=>a+b,0)
+        : 0;
+      devRow = `<tr class="fat-row-dev">
+        <td class="fat-td-label fat-dev-label">(-) Dev./Cancelamentos</td>
+        ${cellsDev}
+        ${showAnual?`<td class="fat-td-anual" style="color:var(--red);opacity:.75">${fmtText(anualDev)}</td>`:''}
+      </tr>`;
+    }
+
+    const cellsLiq = mesesVisiveis.map(m=>{
+      const d = getD(m);
+      const liq = hasDev
+        ? (d.fat[at.key]||0)-(d.fat[at.dev]||0)
+        : (d.fat[at.key]||0);
+      return `<td class="fat-td-liq${m===currentMes?' fat-mes-atual':''}" id="fat_liq_${at.key}_${m}">${fmtText(liq)}</td>`;
+    }).join('');
+
+    const anualLiq = showAnual
+      ? Array.from({length:12},(_,m)=>{
+          const d=getD(m);
+          return hasDev?(d.fat[at.key]||0)-(d.fat[at.dev]||0):(d.fat[at.key]||0);
+        }).reduce((a,b)=>a+b,0)
+      : 0;
+
+    return `
+      <tr class="fat-row-group-start">
+        <td class="fat-td-label fat-label-main">
+          ${at.label}
+        </td>
+        ${cellsBruto}
+        ${showAnual?`<td class="fat-td-anual">${fmtText(anualBruto)}</td>`:''}
+      </tr>
+      ${devRow}
+      <tr class="fat-row-liq">
+        <td class="fat-td-label fat-liq-label">Líquido</td>
+        ${cellsLiq}
+        ${showAnual?`<td class="fat-td-anual fat-td-liq-anual">${fmtText(anualLiq)}</td>`:''}
+      </tr>
+      <tr class="fat-spacer"><td colspan="${mesesVisiveis.length + 1 + (showAnual?1:0)}"></td></tr>`;
+  }).join('');
+
+  // ── Linha de totais ──
+  const totalCells = mesesVisiveis.map(m=>`
+    <td class="fat-td-total${m===currentMes?' fat-mes-atual':''}" id="fat_col_total_${m}">${fmtText(getD(m).fat.receita_bruta_total)}</td>`).join('');
+  const anualTotal = showAnual
+    ? Array.from({length:12},(_,m)=>getD(m).fat.receita_bruta_total).reduce((a,b)=>a+b,0)
+    : 0;
+
+  const tituloMap = {
+    mensal: `Faturamento – ${MONTHS[currentMes]} / ${currentAno}`,
+    trimestral: `Faturamento – ${['1º','2º','3º','4º'][Math.floor(currentMes/3)]} Trimestre / ${currentAno}`,
+    anual: `Faturamento – Visão Anual ${currentAno}`,
+    comparativo: `Faturamento – Anual ${currentAno}`,
+  };
+
+  return `
+    <div class="section">
+      <div class="section-title">${tituloMap[currentView]||tituloMap.anual}</div>
+
+      <!-- Botões de atividade -->
+      <div class="fat-toggle-bar">
+        <span class="fat-toggle-hint">Atividades ativas:</span>
+        ${toggleButtons}
+      </div>
+
+      <div style="overflow-x:auto;margin-top:14px">
+        <table class="fat-grade-table">
+          <thead>
+            <tr>
+              <th class="fat-th-label">Atividade / Rubrica</th>
+              ${mesHeaders}
+              ${anualTh}
+            </tr>
+          </thead>
+          <tbody>
+            ${atAtivasArr.length === 0
+              ? `<tr><td colspan="${mesesVisiveis.length+2}" style="text-align:center;color:var(--text3);padding:30px">Nenhuma atividade selecionada — ative ao menos uma acima</td></tr>`
+              : linhas}
+            <tr class="fat-total-row">
+              <td class="fat-td-label" style="color:var(--accent2);font-weight:700">RECEITA BRUTA TOTAL</td>
+              ${totalCells}
+              ${showAnual?`<td class="fat-td-total fat-td-anual">${fmtText(anualTotal)}</td>`:''}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text3);display:flex;gap:16px;flex-wrap:wrap">
+        <span><kbd style="background:var(--surface2);border:1px solid var(--border2);border-radius:3px;padding:1px 5px;font-size:10px">Enter</kbd> avança mês | <kbd style="background:var(--surface2);border:1px solid var(--border2);border-radius:3px;padding:1px 5px;font-size:10px">&#8593;&#8595;</kbd> troca atividade</span>
+        <span>* = atividade com dados preenchidos</span>
+      </div>
+    </div>`;
+}
+
+// buildFaturamentoMensal mantido como alias
+function buildFaturamentoMensal(mes) { return buildFaturamentoGrade(); }
+
+function fatRow(label, tab, field, devField, mes, f) {
+  // Mantido para compatibilidade com outras abas que ainda usam
+  const liquido = (f[field]||0)-(f[devField]||0);
+  return `
+    <tr>
+      <td>${label}</td>
+      <td>${inp(tab, field, mes)}</td>
+      <td rowspan="2" style="vertical-align:middle">${fmt(liquido)}</td>
+    </tr>
+    <tr class="subtraction">
+      <td>(-) Dev./Cancelamentos</td>
+      <td>${inp(tab, devField, mes)}</td>
+    </tr>`;
+}
+
+// ──────────────────────────────────────────────
+// IRPJ TABLE — segregado por atividade
+// ──────────────────────────────────────────────
+const IRPJ_ATIV_LABELS = {
+  comercio: 'Comércio', industria: 'Indústria', serv_gerais: 'Serviços Gerais',
+  serv_hosp: 'Serv. Hospitalares', transp_pass: 'Transp. Passageiros',
+  transp_carga: 'Transp. de Carga', loc_imob: 'Loc. Imobiliária', at_rural: 'Ativ. Rural',
+};
+
+function buildIrpjMensal(mes) {
+  const d = getD(mes);
+  const f = d.fat, ir = d.irpj;
+  const ativs = ir._ativs || [];
+
+  const IRPJ_TO_FAT = {
+    comercio:'comercio', industria:'industria', serv_gerais:'servicos_gerais',
+    serv_hosp:'serv_hosp', transp_pass:'transp_pass', transp_carga:'transp_carga',
+    loc_imob:'loc_imob', at_rural:'at_rural',
+  };
+
+  const ativsFiltradas = ativs.filter(a => fatAtivas.has(IRPJ_TO_FAT[a.key]));
+  const mostraOutrasReceitas = fatAtivas.has('outras_receitas');
+
+  const totalBaseIrpjFiltrada = ativsFiltradas.reduce((s,a) => s + a.baseIR, 0);
+  const totalBaseCsllFiltrada = ativsFiltradas.reduce((s,a) => s + a.baseCS, 0);
+  const totalRbFiltrada = ativsFiltradas.reduce((s,a) => s + a.rb, 0);
+
+  const outrasReceitas = mostraOutrasReceitas ? (f.outras_receitas||0) : 0;
+  const baseCalcIrpj = totalBaseIrpjFiltrada + outrasReceitas;
+  const irpj15 = baseCalcIrpj * 0.15;
+  const adicBase = Math.max(0, baseCalcIrpj - 20000);
+  const irpjAdic = adicBase * 0.10;
+  const irpjPagar = Math.max(0, irpj15 + irpjAdic - (ir.ret_irpj||0));
+
+  const baseCalcCsll = totalBaseCsllFiltrada + outrasReceitas;
+  const csll9 = baseCalcCsll * 0.09;
+  const csllPagar = Math.max(0, csll9 - (ir.ret_csll||0));
+
+  if (ativsFiltradas.length === 0 && !mostraOutrasReceitas) {
+    return `
+      <div class="section">
+        <div class="section-title">IRPJ / CSLL – Lucro Presumido – ${MONTHS[mes]}</div>
+        <div style="padding:30px;text-align:center;color:var(--text3);background:var(--surface0);border:1px solid var(--border);border-radius:var(--radius)">
+          Nenhuma atividade selecionada na aba Faturamento. Ative ao menos uma atividade para ver a memória de cálculo.
+        </div>
+      </div>`;
+  }
+
+  // Tabela unificada: atividade | receita | aliq IRPJ | base IRPJ | aliq CSLL | base CSLL
+  const presuncaoRows = ativsFiltradas.map(a => {
+    const label = IRPJ_ATIV_LABELS[a.key] || a.key;
+    return `
+      <tr>
+        <td class="irpj-ativ-label">${label}</td>
+        <td class="irpj-val">${fmt(a.rb)}</td>
+        <td class="irpj-aliq">${inpAliq('irpj','aliq_irpj_'+a.key,mes)}</td>
+        <td class="irpj-val">${fmt(a.baseIR)}</td>
+        <td class="irpj-sep"></td>
+        <td class="irpj-aliq">${inpAliq('irpj','aliq_csll_'+a.key,mes)}</td>
+        <td class="irpj-val">${fmt(a.baseCS)}</td>
+      </tr>`;
+  }).join('');
+
+  return `
+    <div class="section">
+      <div class="section-title">IRPJ / CSLL – Lucro Presumido – ${MONTHS[mes]}</div>
+
+      <!-- Tabela unificada de presunção -->
+      <div class="table-wrap" style="margin-bottom:20px">
+        <table class="irpj-presuncao-table">
+          <thead>
+            <tr>
+              <th rowspan="2" class="irpj-th-ativ">Atividade</th>
+              <th rowspan="2" class="irpj-th-rb">Receita Líquida</th>
+              <th colspan="2" class="irpj-th-group irpj-th-irpj">IRPJ</th>
+              <th rowspan="2" class="irpj-th-sep"></th>
+              <th colspan="2" class="irpj-th-group irpj-th-csll">CSLL</th>
+            </tr>
+            <tr>
+              <th class="irpj-th-sub">Alíq. Presunção</th>
+              <th class="irpj-th-sub">Base Presumida</th>
+              <th class="irpj-th-sub">Alíq. Presunção</th>
+              <th class="irpj-th-sub">Base Presumida</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${presuncaoRows}
+            <tr class="total-row">
+              <td class="irpj-ativ-label">Total</td>
+              <td class="irpj-val">${fmt(totalRbFiltrada)}</td>
+              <td></td>
+              <td class="irpj-val">${fmt(totalBaseIrpjFiltrada)}</td>
+              <td class="irpj-sep"></td>
+              <td></td>
+              <td class="irpj-val">${fmt(totalBaseCsllFiltrada)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Cards lado a lado: IRPJ e CSLL -->
+      <div class="irpj-cards-grid">
+
+        <!-- Card IRPJ -->
+        <div class="irpj-card">
+          <div class="irpj-card-header irpj-card-header-ir">IRPJ – Cálculo do Imposto</div>
+          <table class="irpj-card-table">
+            <tbody>
+              <tr>
+                <td>Base Presumida</td>
+                <td class="irpj-val">${fmt(totalBaseIrpjFiltrada)}</td>
+              </tr>
+              ${mostraOutrasReceitas ? `
+              <tr>
+                <td>(+) Outras Receitas</td>
+                <td class="irpj-val">${inp('fat','outras_receitas',mes)}</td>
+              </tr>` : ''}
+              <tr class="irpj-card-total">
+                <td>Base de Cálculo</td>
+                <td class="irpj-val">${fmt(baseCalcIrpj)}</td>
+              </tr>
+              <tr>
+                <td>Alíquota Normal (15%)</td>
+                <td class="irpj-val">${fmt(irpj15)}</td>
+              </tr>
+              <tr>
+                <td>Adicional 10% <span class="badge badge-blue">s/ exc. R$20k</span></td>
+                <td class="irpj-val">${fmt(irpjAdic)}</td>
+              </tr>
+              <tr class="subtraction">
+                <td>(-) Retenções na Fonte</td>
+                <td class="irpj-val">${inp('irpj','ret_irpj',mes)}</td>
+              </tr>
+              <tr class="irpj-card-resultado">
+                <td>IRPJ a Pagar</td>
+                <td class="irpj-val irpj-resultado-valor">${fmt(irpjPagar)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Card CSLL -->
+        <div class="irpj-card">
+          <div class="irpj-card-header irpj-card-header-cs">CSLL – Cálculo do Imposto</div>
+          <table class="irpj-card-table">
+            <tbody>
+              <tr>
+                <td>Base Presumida</td>
+                <td class="irpj-val">${fmt(totalBaseCsllFiltrada)}</td>
+              </tr>
+              ${mostraOutrasReceitas ? `
+              <tr>
+                <td>(+) Outras Receitas</td>
+                <td class="irpj-val">${fmt(f.outras_receitas)}</td>
+              </tr>` : ''}
+              <tr class="irpj-card-total">
+                <td>Base de Cálculo</td>
+                <td class="irpj-val">${fmt(baseCalcCsll)}</td>
+              </tr>
+              <tr>
+                <td>Alíquota (9%)</td>
+                <td class="irpj-val">${fmt(csll9)}</td>
+              </tr>
+              <tr class="subtraction">
+                <td>(-) Retenções na Fonte</td>
+                <td class="irpj-val">${inp('irpj','ret_csll',mes)}</td>
+              </tr>
+              <tr class="irpj-card-resultado">
+                <td>CSLL a Pagar</td>
+                <td class="irpj-val irpj-resultado-valor">${fmt(csllPagar)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div style="margin-top:12px;font-size:11px;color:var(--text3);line-height:1.6">
+        As alíquotas de presunção são editáveis por atividade. Base legal: Lei 9.249/95, Art. 15 (IRPJ) e Art. 20 (CSLL).
+      </div>
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// PIS/COFINS TABLE
+// ──────────────────────────────────────────────
+function buildPisMensal(mes) {
+  const d = getD(mes);
+  const p = d.pis;
+  return `
+    <div class="section">
+      <div class="section-title">PIS / COFINS – Regime Cumulativo – ${MONTHS[mes]}</div>
+
+      <!-- Tabela de apuração da base (compartilhada) -->
+      <div class="table-wrap" style="margin-bottom:20px">
+        <table class="irpj-presuncao-table">
+          <thead>
+            <tr>
+              <th colspan="2" style="text-align:left;color:var(--accent2);font-size:12px;letter-spacing:1px;padding:14px 12px;background:rgba(59,130,246,0.05)">BASE DE CÁLCULO PIS / COFINS</th>
+            </tr>
+            <tr><th class="irpj-th-ativ">Descrição</th><th class="irpj-th-rb">Valor (R$)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="irpj-ativ-label">Receita Bruta Total</td>
+              <td class="irpj-val">${fmt(p.rb_total)}</td>
+            </tr>
+            <tr class="subtraction">
+              <td>(-) Devoluções / Cancelamentos</td>
+              <td class="irpj-val">${fmt(0)}</td>
+            </tr>
+            <tr class="total-row">
+              <td class="irpj-ativ-label">Receita Bruta Ajustada</td>
+              <td class="irpj-val">${fmt(p.rb_total)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Exclusões -->
+      <div class="table-wrap" style="margin-bottom:20px">
+        <table class="irpj-presuncao-table">
+          <thead>
+            <tr>
+              <th colspan="2" style="text-align:left;color:var(--text3);font-size:11px;letter-spacing:1px;padding:12px 12px;background:var(--surface1)">EXCLUSÕES DA BASE DE CÁLCULO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="subtraction"><td>(-) Receitas Sujeitas à Monofasia | CST 04</td><td class="irpj-val">${inp('pis','excl_monofasia',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Receita Sujeita a Subst. Trib. | CST 05</td><td class="irpj-val">${inp('pis','excl_st',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Receitas com Alíquota Zero | CST 06</td><td class="irpj-val">${inp('pis','excl_aliq_zero',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Receitas Isentas | CST 07</td><td class="irpj-val">${inp('pis','excl_isenta',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Receitas p/ o Exterior | CST 08</td><td class="irpj-val">${inp('pis','excl_exterior',mes)}</td></tr>
+            <tr class="total-row">
+              <td class="irpj-ativ-label">Total de Exclusões</td>
+              <td class="irpj-val">${fmt(p.total_exclusoes)}</td>
+            </tr>
+            <tr class="total-row">
+              <td class="irpj-ativ-label" style="font-size:13px">Base de Cálculo PIS / COFINS</td>
+              <td class="irpj-val" style="font-size:14px;font-weight:800">${fmt(p.base_calc)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Cards lado a lado: PIS e COFINS -->
+      <div class="irpj-cards-grid">
+
+        <!-- Card PIS -->
+        <div class="irpj-card">
+          <div class="irpj-card-header irpj-card-header-ir">PIS – Apuração</div>
+          <table class="irpj-card-table">
+            <tbody>
+              <tr>
+                <td>Base de Cálculo</td>
+                <td class="irpj-val">${fmt(p.base_calc)}</td>
+              </tr>
+              <tr>
+                <td>Alíquota PIS</td>
+                <td class="irpj-val">${inpAliq('pis','aliq_pis',mes)}</td>
+              </tr>
+              <tr class="irpj-card-total">
+                <td>PIS Apurado</td>
+                <td class="irpj-val">${fmt(p.pis_apurado)}</td>
+              </tr>
+              <tr class="subtraction">
+                <td>(-) Retenção PIS</td>
+                <td class="irpj-val">${inp('pis','ret_pis',mes)}</td>
+              </tr>
+              <tr class="subtraction">
+                <td>(-) Saldo a Recuperar (per. ant.)</td>
+                <td class="irpj-val">${inp('pis','saldo_ant_pis',mes)}</td>
+              </tr>
+              <tr class="irpj-card-resultado">
+                <td>PIS a Pagar</td>
+                <td class="irpj-val irpj-resultado-valor">${fmt(p.pis_pagar)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Card COFINS -->
+        <div class="irpj-card">
+          <div class="irpj-card-header irpj-card-header-cs">COFINS – Apuração</div>
+          <table class="irpj-card-table">
+            <tbody>
+              <tr>
+                <td>Base de Cálculo</td>
+                <td class="irpj-val">${fmt(p.base_calc)}</td>
+              </tr>
+              <tr>
+                <td>Alíquota COFINS</td>
+                <td class="irpj-val">${inpAliq('pis','aliq_cofins',mes)}</td>
+              </tr>
+              <tr class="irpj-card-total">
+                <td>COFINS Apurado</td>
+                <td class="irpj-val">${fmt(p.cofins_apurado)}</td>
+              </tr>
+              <tr class="subtraction">
+                <td>(-) Retenção COFINS</td>
+                <td class="irpj-val">${inp('pis','ret_cofins',mes)}</td>
+              </tr>
+              <tr class="subtraction">
+                <td>(-) Saldo a Recuperar (per. ant.)</td>
+                <td class="irpj-val">${inp('pis','saldo_ant_cofins',mes)}</td>
+              </tr>
+              <tr class="irpj-card-resultado">
+                <td>COFINS a Pagar</td>
+                <td class="irpj-val irpj-resultado-valor">${fmt(p.cofins_pagar)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Totalizador -->
+      <div style="margin-top:16px;background:var(--surface0);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-weight:700;font-size:13px;color:var(--text)">TOTAL PIS + COFINS A PAGAR</span>
+        <span style="font-family:'DM Mono',monospace;font-size:18px;font-weight:800;color:var(--text)">${fmt(p.total_pagar)}</span>
+      </div>
+
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// ICMS TABLE
+// ──────────────────────────────────────────────
+function buildIcmsMensal(mes) {
+  const d = getD(mes);
+  const ic = d.icms;
+  return `
+    <div class="section">
+      <div class="section-title">ICMS – Apuração Mensal – ${MONTHS[mes]}</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Descrição</th><th class="aliq">Alíq.</th><th>Base de Cálculo (R$)</th><th>ICMS (R$)</th></tr></thead>
+          <tbody>
+            <tr class="section-header"><td colspan="4">DÉBITOS POR SAÍDAS</td></tr>
+            ${icmsRow('Saídas Internas','icms','bc_12_int',0.12,ic.deb_12_int,mes)}
+            ${icmsRow('Saídas Internas','icms','bc_17_int',0.17,ic.deb_17_int,mes)}
+            ${icmsRow('Saídas Internas','icms','bc_18_int',0.18,ic.deb_18_int,mes)}
+            ${icmsRow('Saídas Internas','icms','bc_25_int',0.25,ic.deb_25_int,mes)}
+            ${icmsRow('Saídas Interestaduais','icms','bc_4_inter',0.04,ic.deb_4_inter,mes)}
+            ${icmsRow('Saídas Interestaduais','icms','bc_7_inter',0.07,ic.deb_7_inter,mes)}
+            ${icmsRow('Saídas Interestaduais','icms','bc_12_inter',0.12,ic.deb_12_inter,mes)}
+            <tr>
+              <td>(+) Outros Débitos / Estorno de Crédito</td><td class="aliq">–</td>
+              <td colspan="2">${inp('icms','outros_debitos',mes)}</td>
+            </tr>
+            <tr class="total-row"><td>Total de Débitos</td><td></td><td></td><td>${fmt(ic.total_debitos)}</td></tr>
+
+            <tr class="section-header"><td colspan="4">CRÉDITOS POR ENTRADAS</td></tr>
+            ${credRow('ICMS s/ Compras de Mercadorias p/ Revenda','icms','cred_mercadoria',ic.cred_mercadoria,mes)}
+            ${credRow('ICMS s/ Aquisição de Insumos / Mat.-Prima','icms','cred_insumo',ic.cred_insumo,mes)}
+            ${credRow('ICMS s/ Compras de Ativo Imobilizado (1/48 avos)','icms','cred_ativo',ic.cred_ativo,mes)}
+            ${credRow('ICMS s/ Energia Elétrica (uso industrial)','icms','cred_energia',ic.cred_energia,mes)}
+            ${credRow('ICMS s/ Serviço de Comunicação (uso industrial)','icms','cred_comunicacao',ic.cred_comunicacao,mes)}
+            ${credRow('Outros Créditos / Transferência de Crédito','icms','outros_creditos',ic.outros_creditos,mes)}
+            ${credRow('(+) Estorno de Débito / Outros Créditos','icms','estorno_debito',ic.estorno_debito,mes)}
+            <tr class="total-row"><td>Total de Créditos</td><td></td><td></td><td>${fmt(ic.total_creditos)}</td></tr>
+
+            <tr class="section-header"><td colspan="4">FECP – Fundo Estadual de Combate à Pobreza</td></tr>
+            <tr>
+              <td>Base de Cálculo FECP</td><td class="aliq">${inpAliq('icms','aliq_fecp',mes)}</td>
+              <td>${inp('icms','bc_fecp',mes)}</td>
+              <td>${fmt(ic.fecp_apurado)}</td>
+            </tr>
+            <tr class="subtraction"><td>(-) Crédito FECP</td><td class="aliq">–</td><td>${inp('icms','cred_fecp',mes)}</td><td></td></tr>
+            <tr class="subtraction"><td>(-) Saldo Credor FECP – Per. Anterior</td><td class="aliq">–</td><td>${inp('icms','saldo_fecp_ant',mes)}</td><td></td></tr>
+            <tr class="total-row"><td>FECP a Recolher</td><td></td><td></td><td>${fmt(ic.fecp_recolher)}</td></tr>
+
+            <tr class="section-header"><td colspan="4">APURAÇÃO DO PERÍODO</td></tr>
+            <tr><td>Saldo Devedor/Credor (Débitos – Créditos)</td><td class="aliq">–</td><td></td><td>${fmt(ic.total_debitos - ic.total_creditos)}</td></tr>
+            <tr class="subtraction"><td>(-) Saldo Credor do Período Anterior</td><td class="aliq">–</td><td>${inp('icms','saldo_credor_ant',mes)}</td><td></td></tr>
+            <tr class="total-row"><td>ICMS a Pagar</td><td></td><td></td><td>${fmt(ic.icms_pagar)}</td></tr>
+            ${ic.saldo_credor>0?`<tr><td>Saldo Credor a Transportar</td><td></td><td></td><td><span style="color:var(--green)">${fmt(ic.saldo_credor)}</span></td></tr>`:''}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function icmsRow(desc, tab, field, aliq, val, mes) {
+  return `<tr>
+    <td>${desc} (alíq. ${(aliq*100).toFixed(0)}%)</td>
+    <td class="aliq">${(aliq*100).toFixed(0)}%</td>
+    <td>${inp(tab,field,mes)}</td>
+    <td>${fmt(val)}</td>
+  </tr>`;
+}
+function credRow(label, tab, field, val, mes) {
+  return `<tr class="subtraction">
+    <td>${label}</td><td class="aliq">–</td>
+    <td colspan="2">${inp(tab,field,mes)}</td>
+  </tr>`;
+}
+
+// ──────────────────────────────────────────────
+// ICMS ANTECIPAÇÃO
+// ──────────────────────────────────────────────
+function buildIcmsAntMensal(mes) {
+  const d = getD(mes);
+  const a = d.icms_ant;
+  return `
+    <div class="section">
+      <div class="section-title">ICMS Antecipação Tributária – ${MONTHS[mes]}</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Descrição</th><th class="aliq">Alíq.</th><th>Valor (R$)</th></tr></thead>
+          <tbody>
+            <tr class="section-header"><td colspan="3">DADOS DA OPERAÇÃO INTERESTADUAL</td></tr>
+            <tr><td>Valor Total das Entradas Interestaduais (base NF)</td><td class="aliq">–</td><td>${inp('icms_ant','valor_entradas',mes)}</td></tr>
+            <tr><td>Alíquota Interestadual de Origem</td><td class="aliq">${inpAliq('icms_ant','aliq_interestadual',mes)}</td><td>${fmt(a.icms_origem)}</td></tr>
+            <tr class="section-header"><td colspan="3">CÁLCULO DA ANTECIPAÇÃO</td></tr>
+            <tr><td>Base de Cálculo da Antecipação (c/ MVA/Pauta)</td><td class="aliq">–</td><td>${inp('icms_ant','bc_ant',mes)}</td></tr>
+            <tr><td>Alíquota Interna do Estado de Destino</td><td class="aliq">${inpAliq('icms_ant','aliq_interna',mes)}</td><td>${fmt(a.icms_interna)}</td></tr>
+            <tr class="total-row"><td>ICMS Antecipado (Alíq. Interna − Alíq. Origem)</td><td></td><td>${fmt(a.icms_antecipado)}</td></tr>
+            <tr class="section-header"><td colspan="3">AJUSTES</td></tr>
+            <tr class="subtraction"><td>(-) Antecipações Já Recolhidas no Período</td><td class="aliq">–</td><td>${inp('icms_ant','ant_recolhidas',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Outros Créditos / Benefícios Fiscais</td><td class="aliq">–</td><td>${inp('icms_ant','outros_creditos',mes)}</td></tr>
+            <tr class="total-row"><td>ICMS Antecipação a Recolher</td><td></td><td>${fmt(a.antec_recolher)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// IPI
+// ──────────────────────────────────────────────
+function buildIpiMensal(mes) {
+  const d = getD(mes);
+  const ipi = d.ipi;
+  return `
+    <div class="section">
+      <div class="section-title">IPI – Apuração Mensal – ${MONTHS[mes]}</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Descrição</th><th class="aliq">Alíq.</th><th>Base de Cálculo (R$)</th><th>IPI (R$)</th></tr></thead>
+          <tbody>
+            <tr class="section-header"><td colspan="4">DÉBITOS POR SAÍDAS</td></tr>
+            ${ipiRow('icms','bc_0',0,'',0,ipi.deb_0,mes,'ipi')}
+            ${ipiRow('ipi','bc_5',0.05,'5%',0,ipi.deb_5,mes,'ipi')}
+            ${ipiRow('ipi','bc_10',0.10,'10%',0,ipi.deb_10,mes,'ipi')}
+            ${ipiRow('ipi','bc_15',0.15,'15%',0,ipi.deb_15,mes,'ipi')}
+            ${ipiRow('ipi','bc_20',0.20,'20%',0,ipi.deb_20,mes,'ipi')}
+            ${ipiRow('ipi','bc_25',0.25,'25%',0,ipi.deb_25,mes,'ipi')}
+            <tr><td>(+) Outros Débitos / Estorno de Crédito</td><td class="aliq">–</td><td colspan="2">${inp('ipi','outros_debitos',mes)}</td></tr>
+            <tr class="total-row"><td>Total de Débitos IPI</td><td></td><td></td><td>${fmt(ipi.total_debitos)}</td></tr>
+            <tr class="section-header"><td colspan="4">CRÉDITOS POR ENTRADAS</td></tr>
+            ${credRow('IPI s/ Matérias-Primas (MP)','ipi','cred_mp',ipi.cred_mp,mes)}
+            ${credRow('IPI s/ Produtos Intermediários (PI)','ipi','cred_pi',ipi.cred_pi,mes)}
+            ${credRow('IPI s/ Material de Embalagem (ME)','ipi','cred_me',ipi.cred_me,mes)}
+            ${credRow('Outros Créditos / Saldo Transferido','ipi','saldo_transf',ipi.saldo_transf,mes)}
+            <tr class="total-row"><td>Total de Créditos IPI</td><td></td><td></td><td>${fmt(ipi.total_creditos)}</td></tr>
+            <tr class="section-header"><td colspan="4">IPI POR EQUIPARAÇÃO</td></tr>
+            <tr><td>BC IPI Importação</td><td class="aliq">${inpAliq('ipi','aliq_import',mes)}</td><td>${inp('ipi','bc_import',mes)}</td><td>${fmt(ipi.ipi_import)}</td></tr>
+            <tr><td>(+) IPI Equiparado – Operações Internas</td><td class="aliq">–</td><td colspan="2">${inp('ipi','ipi_equiv_int',mes)}</td></tr>
+            <tr class="total-row"><td>Total IPI por Equiparação</td><td></td><td></td><td>${fmt(ipi.total_equiv)}</td></tr>
+            <tr class="section-header"><td colspan="4">DEVOLUÇÕES</td></tr>
+            <tr class="subtraction"><td>(-) IPI s/ Devoluções de Vendas (crédito)</td><td class="aliq">–</td><td colspan="2">${inp('ipi','dev_venda',mes)}</td></tr>
+            <tr><td>(+) IPI s/ Devoluções de Compras (estorno)</td><td class="aliq">–</td><td colspan="2">${inp('ipi','dev_compra',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Saldo Credor do Período Anterior</td><td class="aliq">–</td><td colspan="2">${inp('ipi','saldo_credor_ant',mes)}</td></tr>
+            <tr class="total-row"><td>IPI a Pagar</td><td></td><td></td><td>${fmt(ipi.ipi_pagar)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+function ipiRow(tab, field, aliq, label, cur, val, mes, realTab) {
+  return `<tr>
+    <td>Saídas Tributadas (alíq. ${label||'0%'})</td>
+    <td class="aliq">${label||'0%'}</td>
+    <td>${inp(realTab||tab,field,mes)}</td>
+    <td>${fmt(val)}</td>
+  </tr>`;
+}
+
+// ──────────────────────────────────────────────
+// ICMS-ST
+// ──────────────────────────────────────────────
+function buildStMensal(mes) {
+  const d = getD(mes);
+  const st = d.icms_st;
+  return `
+    <div class="section">
+      <div class="section-title">ICMS-ST – Substituição Tributária – ${MONTHS[mes]}</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Descrição</th><th class="aliq">%</th><th>Valor (R$)</th></tr></thead>
+          <tbody>
+            <tr class="section-header"><td colspan="3">ST RETIDA NA FONTE – SUBSTITUTO</td></tr>
+            <tr><td>Base de Cálculo ICMS Próprio</td><td class="aliq">–</td><td>${inp('icms_st','bc_proprio',mes)}</td></tr>
+            <tr><td>MVA / IVA Aplicável</td><td class="aliq">${inpAliq('icms_st','mva',mes)}</td><td>${fmt(st.bc_st)}</td></tr>
+            <tr><td>Alíquota Interna do Estado de Destino</td><td class="aliq">${inpAliq('icms_st','aliq_interna',mes)}</td><td>${fmt(st.icms_st_bruto)}</td></tr>
+            <tr class="subtraction"><td>(-) ICMS Próprio da Operação</td><td class="aliq">${inpAliq('icms_st','aliq_inter',mes)}</td><td>${fmt(st.icms_proprio)}</td></tr>
+            <tr class="total-row"><td>ICMS-ST a Reter / Recolher pelo Substituto</td><td></td><td>${fmt(st.st_reter)}</td></tr>
+            <tr class="section-header"><td colspan="3">ST COBRADA NAS ENTRADAS – SUBSTITUÍDO</td></tr>
+            <tr><td>ICMS-ST Cobrado nas Entradas</td><td class="aliq">–</td><td>${inp('icms_st','icms_st_cobrado',mes)}</td></tr>
+            <tr><td>(+) Complemento de ST</td><td class="aliq">–</td><td>${inp('icms_st','compl_st',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Ressarcimento / Restituição de ST</td><td class="aliq">–</td><td>${inp('icms_st','ressarc',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) ST s/ Devoluções de Compras</td><td class="aliq">–</td><td>${inp('icms_st','dev_compra',mes)}</td></tr>
+            <tr><td>(+) ST s/ Devoluções de Vendas</td><td class="aliq">–</td><td>${inp('icms_st','dev_venda',mes)}</td></tr>
+            <tr class="total-row"><td>ST Líquida – Posição do Substituído</td><td></td><td>${fmt(st.st_liquida)}</td></tr>
+            <tr class="section-header"><td colspan="3">APURAÇÃO CONSOLIDADA</td></tr>
+            <tr class="subtraction"><td>(-) ST Já Recolhida via GNRE / DAE</td><td class="aliq">–</td><td>${inp('icms_st','gnre_recolhido',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Saldo ST a Recuperar – Per. Anterior</td><td class="aliq">–</td><td>${inp('icms_st','saldo_ant',mes)}</td></tr>
+            <tr class="total-row"><td>ICMS-ST a Recolher no Período</td><td></td><td>${fmt(st.st_recolher)}</td></tr>
+            ${st.saldo_recuperar>0?`<tr><td>Saldo a Recuperar / Transportar</td><td></td><td><span style="color:var(--green)">${fmt(st.saldo_recuperar)}</span></td></tr>`:''}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// DIFAL
+// ──────────────────────────────────────────────
+function buildDifalMensal(mes) {
+  const d = getD(mes);
+  const df = d.difal;
+  return `
+    <div class="section">
+      <div class="section-title">ICMS DIFAL – Diferencial de Alíquota – ${MONTHS[mes]}</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Descrição</th><th class="aliq">%</th><th>Valor (R$)</th></tr></thead>
+          <tbody>
+            <tr class="section-header"><td colspan="3">DIFAL – ENTRADAS (USO/CONSUMO E ATIVO IMOBILIZADO)</td></tr>
+            <tr><td>Base de Cálculo</td><td class="aliq">–</td><td>${inp('difal','bc_entradas',mes)}</td></tr>
+            <tr><td>Alíquota Interna – Estado de Destino</td><td class="aliq">${inpAliq('difal','aliq_destino',mes)}</td><td></td></tr>
+            <tr><td>Alíquota Interestadual – Estado de Origem</td><td class="aliq">${inpAliq('difal','aliq_origem',mes)}</td><td></td></tr>
+            <tr class="total-row"><td>DIFAL Entradas (BC × [Alíq. Destino − Alíq. Origem])</td><td></td><td>${fmt(df.difal_entradas)}</td></tr>
+            <tr><td>Partilha – Estado de Destino</td><td class="aliq">${inpAliq('difal','partilha_destino',mes)}</td><td>${fmt(df.difal_destino)}</td></tr>
+            <tr><td>Partilha – Estado de Origem</td><td class="aliq">${inpAliq('difal','partilha_origem',mes)}</td><td>${fmt(df.difal_origem)}</td></tr>
+            <tr class="section-header"><td colspan="3">DIFAL – SAÍDAS P/ NÃO CONTRIBUINTES (E-COMMERCE / B2C)</td></tr>
+            <tr><td>Base de Cálculo B2C</td><td class="aliq">–</td><td>${inp('difal','bc_b2c',mes)}</td></tr>
+            <tr><td>Alíquota Interna – Estado de Destino</td><td class="aliq">${inpAliq('difal','aliq_destino_b2c',mes)}</td><td></td></tr>
+            <tr><td>Alíquota Interestadual – Estado de Origem</td><td class="aliq">${inpAliq('difal','aliq_origem_b2c',mes)}</td><td></td></tr>
+            <tr><td>DIFAL Saídas B2C</td><td class="aliq">–</td><td>${fmt(df.difal_b2c)}</td></tr>
+            <tr><td>(+) FECP s/ DIFAL B2C</td><td class="aliq">${inpAliq('difal','aliq_fecp_b2c',mes)}</td><td>${fmt(df.fecp_b2c)}</td></tr>
+            <tr class="total-row"><td>Total DIFAL B2C + FECP</td><td></td><td>${fmt(df.total_b2c)}</td></tr>
+            <tr class="section-header"><td colspan="3">AJUSTES E APURAÇÃO CONSOLIDADA</td></tr>
+            <tr class="subtraction"><td>(-) DIFAL Já Recolhido via GNRE</td><td class="aliq">–</td><td>${inp('difal','gnre_recolhido',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Devoluções / Cancelamentos (estorno)</td><td class="aliq">–</td><td>${inp('difal','dev_cancel',mes)}</td></tr>
+            <tr class="subtraction"><td>(-) Saldo DIFAL a Recuperar – Per. Anterior</td><td class="aliq">–</td><td>${inp('difal','saldo_ant',mes)}</td></tr>
+            <tr class="total-row"><td>DIFAL a Recolher no Período</td><td></td><td>${fmt(df.difal_recolher)}</td></tr>
+            ${df.saldo_recuperar>0?`<tr><td>Saldo a Recuperar / Transportar</td><td></td><td><span style="color:var(--green)">${fmt(df.saldo_recuperar)}</span></td></tr>`:''}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// RESUMO GERAL
+// ──────────────────────────────────────────────
+function buildResumoMensal(mes) {
+  const d = getD(mes);
+  const rows = [
+    ['IRPJ a Pagar', d.irpj.irpj_pagar],
+    ['CSLL a Pagar', d.irpj.csll_pagar],
+    ['PIS a Pagar', d.pis.pis_pagar],
+    ['COFINS a Pagar', d.pis.cofins_pagar],
+    ['ICMS a Pagar', d.icms.icms_pagar],
+    ['FECP a Recolher', d.icms.fecp_recolher],
+    ['ICMS Antecipação a Recolher', d.icms_ant.antec_recolher],
+    ['IPI a Pagar', d.ipi.ipi_pagar],
+    ['ICMS-ST a Recolher', d.icms_st.st_recolher],
+    ['DIFAL a Recolher', d.difal.difal_recolher],
+  ];
+  const total = rows.reduce((a,[,v])=>a+(v||0),0);
+  return `
+    <div class="section">
+      <div class="section-title">Resumo Geral de Impostos – ${MONTHS[mes]}</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Imposto / Contribuição</th><th>Valor a Pagar (R$)</th><th>% da RB</th></tr></thead>
+          <tbody>
+            ${rows.map(([label,val])=>{
+              const rb = d.fat.receita_bruta_total;
+              const pct = rb>0?(val/rb*100).toFixed(2)+'%':'–';
+              return `<tr><td>${label}</td><td>${fmt(val)}</td><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${pct}</td></tr>`;
+            }).join('')}
+            <tr class="total-row">
+              <td>TOTAL IMPOSTOS</td>
+              <td>${fmt(total)}</td>
+              <td style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2)">
+                ${d.fat.receita_bruta_total>0?(total/d.fat.receita_bruta_total*100).toFixed(2)+'%':'–'}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// ANNUAL VIEW
+// ──────────────────────────────────────────────
+function buildAnual() {
+  const metrics = [
+    { key:'rb',    label:'Receita Bruta', fn: m=>getD(m).fat.receita_bruta_total, isRB:true },
+    { key:'irpj',  label:'IRPJ',          fn: m=>getD(m).irpj.irpj_pagar },
+    { key:'csll',  label:'CSLL',          fn: m=>getD(m).irpj.csll_pagar },
+    { key:'pis',   label:'PIS',           fn: m=>getD(m).pis.pis_pagar },
+    { key:'cofins',label:'COFINS',        fn: m=>getD(m).pis.cofins_pagar },
+    { key:'icms',  label:'ICMS',          fn: m=>getD(m).icms.icms_pagar+getD(m).icms.fecp_recolher },
+    { key:'ipi',   label:'IPI',           fn: m=>getD(m).ipi.ipi_pagar },
+    { key:'st',    label:'ICMS-ST',       fn: m=>getD(m).icms_st.st_recolher },
+    { key:'difal', label:'DIFAL',         fn: m=>getD(m).difal.difal_recolher },
+  ];
+
+  const totalImpostos = m => metrics.filter(x=>!x.isRB).reduce((a,x)=>a+(x.fn(m)||0),0);
+  const totalAnual    = k => Array.from({length:12},(_,m)=>metrics.find(x=>x.key===k).fn(m)||0).reduce((a,b)=>a+b,0);
+
+  return `
+    <div class="section">
+      <div class="section-title">Visão Anual – ${currentAno} – Todos os Meses</div>
+      <div style="overflow-x:auto">
+        <table class="year-table">
+          <thead>
+            <tr>
+              <th style="min-width:130px">Imposto</th>
+              ${MONTHS_SHORT.map((m,i)=>`<th class="month-col${i===currentMes?' fat-mes-atual':''}" style="min-width:88px">${m}</th>`).join('')}
+              <th style="background:rgba(59,130,246,0.12);color:var(--accent2);min-width:100px">Total Anual</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${metrics.map(x=>`
+              <tr class="${x.isRB?'fat-total-row':''}">
+                <td style="font-weight:600;color:${x.isRB?'var(--text)':'var(--text2)'}">${x.label}</td>
+                ${Array.from({length:12},(_,m)=>`
+                  <td class="${m===currentMes?'fat-mes-atual':''}" style="${x.isRB?'color:var(--text)':''}">${fmt(x.fn(m))}</td>`).join('')}
+                <td style="color:var(--accent2);font-weight:700;font-family:'DM Mono',monospace">${fmt(totalAnual(x.key))}</td>
+              </tr>`).join('')}
+            <tr class="total-row">
+              <td>TOTAL IMPOSTOS</td>
+              ${Array.from({length:12},(_,m)=>`<td>${fmt(totalImpostos(m))}</td>`).join('')}
+              <td>${fmt(Array.from({length:12},(_,m)=>totalImpostos(m)).reduce((a,b)=>a+b,0))}</td>
+            </tr>
+            <tr>
+              <td style="color:var(--text3);font-size:11px">Carga tributária %</td>
+              ${Array.from({length:12},(_,m)=>{
+                const rb=getD(m).fat.receita_bruta_total;
+                const ti=totalImpostos(m);
+                const pct=rb>0?((ti/rb)*100).toFixed(1)+'%':'–';
+                return `<td style="color:var(--text3);font-size:11px;font-family:'DM Mono',monospace">${pct}</td>`;
+              }).join('')}
+              <td style="color:var(--text3);font-size:11px;font-family:'DM Mono',monospace">
+                ${(()=>{const rb=Array.from({length:12},(_,m)=>getD(m).fat.receita_bruta_total).reduce((a,b)=>a+b,0);const ti=Array.from({length:12},(_,m)=>totalImpostos(m)).reduce((a,b)=>a+b,0);return rb>0?((ti/rb)*100).toFixed(1)+'%':'–';})()}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// TRIMESTRAL VIEW
+// ──────────────────────────────────────────────
+function buildTrimestral() {
+  const TRIMESTRES = [
+    { label:'1º Trimestre', meses:[0,1,2]   },
+    { label:'2º Trimestre', meses:[3,4,5]   },
+    { label:'3º Trimestre', meses:[6,7,8]   },
+    { label:'4º Trimestre', meses:[9,10,11] },
+  ];
+  // Trimestre atual baseado no mês selecionado
+  const trimAtual = Math.floor(currentMes / 3);
+
+  const metrics = [
+    { label:'Receita Bruta',  fn: m=>getD(m).fat.receita_bruta_total, isRB:true },
+    { label:'IRPJ',           fn: m=>getD(m).irpj.irpj_pagar },
+    { label:'CSLL',           fn: m=>getD(m).irpj.csll_pagar },
+    { label:'PIS',            fn: m=>getD(m).pis.pis_pagar },
+    { label:'COFINS',         fn: m=>getD(m).pis.cofins_pagar },
+    { label:'ICMS',           fn: m=>getD(m).icms.icms_pagar+getD(m).icms.fecp_recolher },
+    { label:'IPI',            fn: m=>getD(m).ipi.ipi_pagar },
+    { label:'ICMS-ST',        fn: m=>getD(m).icms_st.st_recolher },
+    { label:'DIFAL',          fn: m=>getD(m).difal.difal_recolher },
+  ];
+  const totalImp = m => metrics.filter(x=>!x.isRB).reduce((a,x)=>a+(x.fn(m)||0),0);
+  const somaT    = (fns, meses) => meses.reduce((a,m)=>a+(fns(m)||0),0);
+
+  const trimestreBlocks = TRIMESTRES.map((t,ti)=>{
+    const isAtual = ti === trimAtual;
+    const colStyle = isAtual ? 'background:rgba(59,130,246,0.06)' : '';
+    return `
+      <div class="trim-block${isAtual?' trim-atual':''}">
+        <div class="trim-header">${t.label}${isAtual?' <span class="badge badge-blue">atual</span>':''}</div>
+        <table class="sn-tributos-table" style="width:100%">
+          <thead>
+            <tr>
+              <th style="min-width:120px">Apuração</th>
+              ${t.meses.map(m=>`<th style="min-width:90px;${m===currentMes?'color:var(--accent2)':''}">${MONTHS_SHORT[m]}</th>`).join('')}
+              <th style="color:var(--accent2);background:rgba(59,130,246,0.08)">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${metrics.map(x=>`
+              <tr class="${x.isRB?'total-row':''}">
+                <td style="font-family:'Syne',sans-serif;font-weight:${x.isRB?'700':'500'}">${x.label}</td>
+                ${t.meses.map(m=>`<td style="${m===currentMes?'color:var(--accent2)':''}">${fmt(x.fn(m))}</td>`).join('')}
+                <td style="color:${x.isRB?'var(--text)':'var(--accent2)'};font-weight:700;background:rgba(59,130,246,0.06)">${fmt(somaT(x.fn,t.meses))}</td>
+              </tr>`).join('')}
+            <tr class="total-row">
+              <td>Total Impostos</td>
+              ${t.meses.map(m=>`<td>${fmt(totalImp(m))}</td>`).join('')}
+              <td style="background:rgba(59,130,246,0.1)">${fmt(somaT(totalImp,t.meses))}</td>
+            </tr>
+            <tr>
+              <td style="font-size:11px;color:var(--text3)">Carga %</td>
+              ${t.meses.map(m=>{
+                const rb=getD(m).fat.receita_bruta_total;
+                const ti=totalImp(m);
+                return `<td style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${rb>0?((ti/rb)*100).toFixed(1)+'%':'–'}</td>`;
+              }).join('')}
+              <td style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;background:rgba(59,130,246,0.06)">${(()=>{
+                const rb=somaT(m=>getD(m).fat.receita_bruta_total,t.meses);
+                const ti=somaT(totalImp,t.meses);
+                return rb>0?((ti/rb)*100).toFixed(1)+'%':'–';
+              })()}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>`;
+  }).join('');
+
+  // IRPJ trimestral (Lucro Presumido apura IRPJ trimestralmente)
+  const irpjTrimBlocks = TRIMESTRES.map((t,ti)=>{
+    const isAtual = ti === trimAtual;
+    const baseIRPJ = somaT(m=>getD(m).irpj.base_calc_irpj, t.meses);
+    const irpj15   = baseIRPJ * 0.15;
+    const adicBase  = Math.max(0, baseIRPJ - 60000); // limite trimestral = 60k
+    const irpjAdic  = adicBase * 0.10;
+    const retIRPJ   = somaT(m=>getD(m).irpj.ret_irpj||0, t.meses);
+    const irpjPagar = irpj15 + irpjAdic - retIRPJ;
+    const baseCSLL  = somaT(m=>getD(m).irpj.base_calc_csll, t.meses);
+    const retCSLL   = somaT(m=>getD(m).irpj.ret_csll||0, t.meses);
+    const csllPagar = baseCSLL * 0.09 - retCSLL;
+    return `
+      <div class="trim-block${isAtual?' trim-atual':''}">
+        <div class="trim-header">${t.label} – IRPJ/CSLL Trimestral${isAtual?' <span class="badge badge-blue">atual</span>':''}</div>
+        <table class="sn-tributos-table" style="width:100%">
+          <thead><tr><th>Descrição</th><th>IRPJ</th><th>CSLL</th></tr></thead>
+          <tbody>
+            <tr><td>Base de Cálculo</td><td>${fmt(baseIRPJ)}</td><td>${fmt(baseCSLL)}</td></tr>
+            <tr><td>Imposto Bruto (15% / 9%)</td><td>${fmt(irpj15)}</td><td>${fmt(baseCSLL*0.09)}</td></tr>
+            <tr><td>Adicional IRPJ 10%</td><td>${fmt(irpjAdic)}</td><td>–</td></tr>
+            <tr><td>(-) Retenções</td><td style="color:var(--red)">${fmt(retIRPJ)}</td><td style="color:var(--red)">${fmt(retCSLL)}</td></tr>
+            <tr class="total-row"><td>A Pagar no Trimestre</td><td>${fmt(irpjPagar)}</td><td>${fmt(csllPagar)}</td></tr>
+          </tbody>
+        </table>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="section">
+      <div class="section-title">Visão Trimestral – ${currentAno}</div>
+      <div class="trim-grid">${trimestreBlocks}</div>
+      <div class="section-title" style="margin-top:28px">IRPJ / CSLL – Base Trimestral (Lucro Presumido)</div>
+      <div class="trim-grid">${irpjTrimBlocks}</div>
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// COMPARATIVO — anual mês a mês (12 colunas)
+// ──────────────────────────────────────────────
+function buildComparativo() {
+  const metrics = [
+    { label:'Receita Bruta',  fn: m=>getD(m).fat.receita_bruta_total, isRB:true },
+    { label:'IRPJ',           fn: m=>getD(m).irpj.irpj_pagar },
+    { label:'CSLL',           fn: m=>getD(m).irpj.csll_pagar },
+    { label:'PIS',            fn: m=>getD(m).pis.pis_pagar },
+    { label:'COFINS',         fn: m=>getD(m).pis.cofins_pagar },
+    { label:'ICMS + FECP',    fn: m=>getD(m).icms.icms_pagar+getD(m).icms.fecp_recolher },
+    { label:'IPI',            fn: m=>getD(m).ipi.ipi_pagar },
+    { label:'ICMS-ST',        fn: m=>getD(m).icms_st.st_recolher },
+    { label:'DIFAL',          fn: m=>getD(m).difal.difal_recolher },
+    { label:'ICMS Antecip.',  fn: m=>getD(m).icms_ant.antec_recolher },
+  ];
+  const totalImp = m => metrics.filter(x=>!x.isRB).reduce((a,x)=>a+(x.fn(m)||0),0);
+  const anualFn  = fn => Array.from({length:12},(_,m)=>fn(m)||0).reduce((a,b)=>a+b,0);
+
+  // Variação mês a mês: cor e seta
+  function varCell(cur, prv, isRB) {
+    if (!prv) return `<td class="comp-var-cell">–</td><td class="comp-pct-cell">–</td>`;
+    const diff = cur - prv;
+    const pct  = ((diff/prv)*100).toFixed(1);
+    // Para RB: alta é verde; para impostos: alta é vermelho
+    const isGood = isRB ? diff >= 0 : diff <= 0;
+    const color  = diff===0?'var(--text3)':isGood?'var(--green)':'var(--red)';
+    const arrow  = diff>0?'▲':diff<0?'▼':'';
+    return `
+      <td class="comp-var-cell" style="color:${color}">${arrow} ${diff!==0?fmtText(Math.abs(diff)):'–'}</td>
+      <td class="comp-pct-cell" style="color:${color}">${arrow} ${pct}%</td>`;
+  }
+
+  // Gera grupos de 3 meses para deixar legível
+  const TRIMS = [[0,1,2],[3,4,5],[6,7,8],[9,10,11]];
+  const trimLabels = ['1º Trim','2º Trim','3º Trim','4º Trim'];
+
+  const metricRows = [...metrics,
+    { label:'TOTAL IMPOSTOS', fn: totalImp, isTotal:true },
+  ].map(x=>{
+    const isRB = x.isRB||false;
+    const rowClass = x.isTotal?'total-row':isRB?'fat-total-row':'';
+    const cellsAll = Array.from({length:12},(_,m)=>{
+      const v   = x.fn(m)||0;
+      const prv = m>0 ? x.fn(m-1)||0 : null;
+      const isAtu = m===currentMes;
+      return `
+        <td class="comp-val-cell${isAtu?' fat-mes-atual':''}">${fmt(v)}</td>
+        ${varCell(v, prv, isRB)}`;
+    }).join('');
+
+    const totalAnual = anualFn(x.fn);
+    return `<tr class="${rowClass}">
+      <td class="comp-label-cell" style="font-weight:${x.isTotal||isRB?700:500}">${x.label}</td>
+      ${cellsAll}
+      <td class="comp-total-cell">${fmt(totalAnual)}</td>
+    </tr>`;
+  }).join('');
+
+  // Linha de carga %
+  const cargaRow = `<tr>
+    <td class="comp-label-cell" style="color:var(--text3);font-size:11px">Carga Trib. %</td>
+    ${Array.from({length:12},(_,m)=>{
+      const rb=getD(m).fat.receita_bruta_total;
+      const ti=totalImp(m);
+      const pct=rb>0?((ti/rb)*100).toFixed(1)+'%':'–';
+      const prv=m>0?(getD(m-1).fat.receita_bruta_total>0?(totalImp(m-1)/getD(m-1).fat.receita_bruta_total*100):null):null;
+      const cur=rb>0?(ti/rb*100):null;
+      const diff=cur!==null&&prv!==null?cur-prv:null;
+      const color=diff===null?'var(--text3)':diff>0?'var(--red)':'var(--green)';
+      return `<td class="comp-val-cell${m===currentMes?' fat-mes-atual':''}" style="color:${color};font-size:11px">${pct}</td>
+        <td class="comp-var-cell" style="color:${color}"></td>
+        <td class="comp-pct-cell" style="color:${color}"></td>`;
+    }).join('')}
+    <td class="comp-total-cell" style="font-size:11px;color:var(--text3)">${(()=>{
+      const rb=anualFn(m=>getD(m).fat.receita_bruta_total);
+      const ti=anualFn(totalImp);
+      return rb>0?((ti/rb)*100).toFixed(1)+'%':'–';
+    })()}</td>
+  </tr>`;
+
+  // Cabeçalho com grupos de trimestre
+  const headerTrim = TRIMS.map((t,ti)=>`
+    <th colspan="${t.length*3}" style="text-align:center;background:rgba(59,130,246,${ti%2===0?'0.06':'0.03'});color:var(--accent2);font-size:10px;letter-spacing:.8px;text-transform:uppercase">${trimLabels[ti]}</th>`).join('');
+
+  const headerMeses = Array.from({length:12},(_,m)=>
+    `<th colspan="3" style="min-width:160px;text-align:center;background:${m===currentMes?'rgba(59,130,246,0.1)':''};color:${m===currentMes?'var(--accent2)':''}">
+      ${MONTHS_SHORT[m]}
+    </th>`).join('');
+
+  const subHeaders = Array.from({length:12},(_,m)=>
+    `<th class="comp-val-head">Valor</th>
+     <th class="comp-var-head">Var. R$</th>
+     <th class="comp-pct-head">Var. %</th>`).join('');
+
+  return `
+    <div class="section">
+      <div class="section-title">Comparativo Anual – Mês a Mês – ${currentAno}</div>
+      <div style="overflow-x:auto">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th rowspan="2" style="min-width:130px;text-align:left">Apuração</th>
+              ${headerTrim}
+              <th rowspan="2" class="comp-total-head">Total<br>Anual</th>
+            </tr>
+            <tr>${headerMeses}</tr>
+            <tr style="background:var(--bg)">
+              <th style="text-align:left;color:var(--text3);font-size:10px;padding:4px 10px">Mês / Variação vs mês anterior</th>
+              ${subHeaders}
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${metricRows}
+            ${cargaRow}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text3)">
+        Variação calculada em relação ao mês imediatamente anterior. 
+        <span style="color:var(--green)">Verde</span> = melhora | <span style="color:var(--red)">Vermelho</span> = piora (RB: alta é boa; tributos: queda é boa)
+      </div>
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// RENDER
+// ──────────────────────────────────────────────
+function render() {
+  const mes = currentMes;
+  const area = document.getElementById('content-area');
+  let html = '';
+
+  if (currentTab === 'simples') {
+    html = buildSimplesNacional();
+  } else if (currentView === 'anual') {
+    if (currentTab === 'faturamento') {
+      html = buildFaturamentoGrade();
+    } else {
+      html = buildAnual();
+    }
+  } else if (currentView === 'trimestral') {
+    if (currentTab === 'faturamento') {
+      html = buildFaturamentoGrade();
+    } else {
+      html = buildTrimestral();
+    }
+  } else if (currentView === 'comparativo') {
+    html = buildCards(mes) + buildComparativo();
+  } else {
+    // Mensal
+    html = buildCards(mes);
+    switch(currentTab) {
+      case 'faturamento': html += buildFaturamentoGrade(); break;
+      case 'irpj':        html += buildIrpjMensal(mes); break;
+      case 'pis':         html += buildPisMensal(mes); break;
+      case 'icms':        html += buildIcmsMensal(mes); break;
+      case 'icms_ant':    html += buildIcmsAntMensal(mes); break;
+      case 'ipi':         html += buildIpiMensal(mes); break;
+      case 'icms_st':     html += buildStMensal(mes); break;
+      case 'difal':       html += buildDifalMensal(mes); break;
+      case 'resumo':      html += buildResumoMensal(mes); break;
+    }
+  }
+  area.innerHTML = `<div class="fade-in">${html}</div>`;
+}
+
+// ══════════════════════════════════════════════
+// SIMPLES NACIONAL — CALCULADORA COMPLETA
+// ══════════════════════════════════════════════
+
+// ── Tabelas oficiais LC 123/2006, vigência 2018+ ─────────────────
+// Anexo IV NÃO possui CPP no DAS — a empresa recolhe INSS patronal
+// separadamente pela guia de Previdência (GPS/DARF).
+// Fator R aplica apenas Anexos III e V:
+//   FatorR = Folha12 / RB12
+//   FatorR >= 28% → enquadra no Anexo III
+//   FatorR <  28% → enquadra no Anexo V
+const SN_ANEXOS = {
+  1: {
+    nome: 'Anexo I – Comércio',
+    temCPP: true, temFatorR: false,
+    faixas: [
+      { ate:  180000, aliq:0.0400, deduzir:      0, trib:{IRPJ:5.5, CSLL:3.5, Cofins:12.74, PIS:2.76, CPP:41.5,  ICMS:34.0} },
+      { ate:  360000, aliq:0.0730, deduzir:   5940, trib:{IRPJ:5.5, CSLL:3.5, Cofins:12.74, PIS:2.76, CPP:41.5,  ICMS:34.0} },
+      { ate:  720000, aliq:0.0950, deduzir:  13860, trib:{IRPJ:5.5, CSLL:3.5, Cofins:12.74, PIS:2.76, CPP:42.0,  ICMS:33.5} },
+      { ate: 1800000, aliq:0.1070, deduzir:  22500, trib:{IRPJ:5.5, CSLL:3.5, Cofins:12.74, PIS:2.76, CPP:42.0,  ICMS:33.5} },
+      { ate: 3600000, aliq:0.1430, deduzir:  87300, trib:{IRPJ:5.5, CSLL:3.5, Cofins:12.74, PIS:2.76, CPP:41.5,  ICMS:34.0} },
+      { ate: 4800000, aliq:0.1900, deduzir: 378000, trib:{IRPJ:13.5,CSLL:10.0,Cofins:28.27, PIS:6.13, CPP:42.1,  ICMS:0  } },
+    ]
+  },
+  2: {
+    nome: 'Anexo II – Indústria',
+    temCPP: true, temFatorR: false,
+    faixas: [
+      { ate:  180000, aliq:0.0450, deduzir:      0, trib:{IRPJ:5.5, CSLL:3.5, Cofins:11.51, PIS:2.49, CPP:37.0, ICMS:32.0, IPI:8.5 } },
+      { ate:  360000, aliq:0.0780, deduzir:   5940, trib:{IRPJ:5.5, CSLL:3.5, Cofins:11.51, PIS:2.49, CPP:37.0, ICMS:32.0, IPI:8.5 } },
+      { ate:  720000, aliq:0.1000, deduzir:  13860, trib:{IRPJ:5.5, CSLL:3.5, Cofins:11.51, PIS:2.49, CPP:37.5, ICMS:32.0, IPI:7.5 } },
+      { ate: 1800000, aliq:0.1120, deduzir:  22500, trib:{IRPJ:5.5, CSLL:3.5, Cofins:11.51, PIS:2.49, CPP:37.5, ICMS:32.0, IPI:7.5 } },
+      { ate: 3600000, aliq:0.1500, deduzir:  87300, trib:{IRPJ:5.5, CSLL:3.5, Cofins:11.51, PIS:2.49, CPP:37.0, ICMS:32.0, IPI:8.5 } },
+      { ate: 4800000, aliq:0.2030, deduzir: 378000, trib:{IRPJ:10.5,CSLL:7.5, Cofins:26.77, PIS:5.8,  CPP:37.0, ICMS:0,    IPI:12.43} },
+    ]
+  },
+  3: {
+    nome: 'Anexo III – Serviços (FatorR ≥ 28%)',
+    temCPP: true, temFatorR: true,
+    faixas: [
+      { ate:  180000, aliq:0.0600, deduzir:      0, trib:{IRPJ:4.0, CSLL:3.5, Cofins:12.82, PIS:2.78, CPP:43.4, ISS:33.5} },
+      { ate:  360000, aliq:0.1120, deduzir:   9360, trib:{IRPJ:4.0, CSLL:3.5, Cofins:14.05, PIS:3.05, CPP:43.4, ISS:32.0} },
+      { ate:  720000, aliq:0.1350, deduzir:  17640, trib:{IRPJ:4.0, CSLL:3.5, Cofins:13.64, PIS:2.96, CPP:43.4, ISS:32.5} },
+      { ate: 1800000, aliq:0.1600, deduzir:  35640, trib:{IRPJ:4.0, CSLL:3.5, Cofins:13.64, PIS:2.96, CPP:43.4, ISS:32.5} },
+      { ate: 3600000, aliq:0.2100, deduzir: 125640, trib:{IRPJ:4.0, CSLL:3.5, Cofins:12.82, PIS:2.78, CPP:43.4, ISS:33.5} },
+      { ate: 4800000, aliq:0.3300, deduzir: 648000, trib:{IRPJ:35.0,CSLL:15.0,Cofins:16.03, PIS:3.47, CPP:0,   ISS:30.5} },
+    ]
+  },
+  4: {
+    // Anexo IV: SEM CPP no DAS — INSS patronal pago separado em GPS
+    nome: 'Anexo IV – Serviços (sem CPP no DAS)',
+    temCPP: false, temFatorR: false,
+    faixas: [
+      { ate:  180000, aliq:0.0450, deduzir:      0, trib:{IRPJ:18.8,CSLL:15.2,Cofins:17.67, PIS:3.83, ISS:44.5} },
+      { ate:  360000, aliq:0.0900, deduzir:   8100, trib:{IRPJ:19.8,CSLL:15.2,Cofins:20.55, PIS:4.47, ISS:40.0} },
+      { ate:  720000, aliq:0.1020, deduzir:  12420, trib:{IRPJ:20.8,CSLL:15.2,Cofins:19.73, PIS:4.28, ISS:40.0} },
+      { ate: 1800000, aliq:0.1400, deduzir:  39780, trib:{IRPJ:17.8,CSLL:19.2,Cofins:18.9,  PIS:4.1,  ISS:40.0} },
+      { ate: 3600000, aliq:0.2200, deduzir: 183780, trib:{IRPJ:18.8,CSLL:19.2,Cofins:18.08, PIS:3.92, ISS:40.0} },
+      { ate: 4800000, aliq:0.3300, deduzir: 828000, trib:{IRPJ:53.5,CSLL:21.5,Cofins:20.55, PIS:4.47, ISS:0  } },
+    ]
+  },
+  5: {
+    nome: 'Anexo V – Serviços (FatorR < 28%)',
+    temCPP: true, temFatorR: true,
+    faixas: [
+      { ate:  180000, aliq:0.1550, deduzir:      0, trib:{IRPJ:25.0,CSLL:15.0,Cofins:14.10, PIS:3.05, CPP:28.85, ISS:14.0} },
+      { ate:  360000, aliq:0.1800, deduzir:   4500, trib:{IRPJ:23.0,CSLL:15.0,Cofins:14.10, PIS:3.05, CPP:27.85, ISS:17.0} },
+      { ate:  720000, aliq:0.1950, deduzir:   9900, trib:{IRPJ:24.0,CSLL:15.0,Cofins:14.92, PIS:3.23, CPP:23.85, ISS:19.0} },
+      { ate: 1800000, aliq:0.2050, deduzir:  17100, trib:{IRPJ:21.0,CSLL:15.0,Cofins:15.74, PIS:3.41, CPP:23.85, ISS:21.0} },
+      { ate: 3600000, aliq:0.2300, deduzir:  62100, trib:{IRPJ:23.0,CSLL:12.5, Cofins:14.10, PIS:3.05, CPP:23.85, ISS:23.5} },
+      { ate: 4800000, aliq:0.3050, deduzir: 540000, trib:{IRPJ:35.0,CSLL:15.5, Cofins:16.44, PIS:3.56, CPP:29.5,  ISS:0  } },
+    ]
+  }
+};
+
+// ── Estado persistente da calculadora ────────────────────────────
+let snAnexo   = 5;
+let snRB12    = 0;
+let snFolha12 = 0;  // total acumulado 12 meses
+let snRBMes   = 0;
+// Folha mensal: guarda os últimos 12 meses individualmente
+let snFolhaMeses = Array(12).fill(0); // índice 0 = mês mais recente
+
+// ── Núcleo do cálculo ─────────────────────────────────────────────
+function calcSN(rb12, folha12, rbMes, anexoId) {
+  const anexo = SN_ANEXOS[anexoId];
+  if (!rb12 || rb12 <= 0) return null;
+  // Determina faixa
+  let faixaIdx = anexo.faixas.length - 1;
+  for (let i = 0; i < anexo.faixas.length; i++) {
+    if (rb12 <= anexo.faixas[i].ate) { faixaIdx = i; break; }
+  }
+  const faixa = anexo.faixas[faixaIdx];
+  // Alíquota efetiva
+  const aliqEfetiva = Math.max(0, (rb12 * faixa.aliq - faixa.deduzir) / rb12);
+  // Fator R
+  const fatorR = (rb12 > 0 && (anexoId === 3 || anexoId === 5))
+    ? folha12 / rb12
+    : null;
+  // Imposto
+  const impostoMes = rbMes > 0 ? rbMes * aliqEfetiva : 0;
+  // Repartição
+  const dist = {};
+  Object.entries(faixa.trib).forEach(([k, pct]) => {
+    dist[k] = impostoMes * (pct / 100);
+  });
+  return { faixaIdx, faixa, aliqEfetiva, impostoMes, dist, rb12, rbMes, fatorR, anexo };
+}
+
+// ── Helpers de formatação — SEM reformatar durante digitação ─────
+function snParseVal(s) {
+  if (!s || s.trim() === '') return 0;
+  // Aceita tanto "1.200,50" (BR) quanto "1200.50" (EN) e número puro
+  const clean = s.replace(/\s/g,'');
+  // Formato BR: pontos como milhar, vírgula como decimal
+  if (/^\d{1,3}(\.\d{3})*(,\d{0,2})?$/.test(clean)) {
+    return parseFloat(clean.replace(/\./g,'').replace(',','.')) || 0;
+  }
+  // Remove tudo exceto dígitos e ponto/vírgula
+  const num = clean.replace(/[^\d,\.]/g,'').replace(',','.');
+  return parseFloat(num) || 0;
+}
+
+function snFmtDisplay(v) {
+  if (v === null || v === undefined || isNaN(v)) return '';
+  return v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+// Formata ao sair do campo (blur) — não interfere durante digitação
+function snBlur(el) {
+  const v = snParseVal(el.value);
+  el.value = snFmtDisplay(v);
+  snCommit();
+}
+
+// Commit lê todos os campos e recalcula SEM recriar o DOM
+function snCommit() {
+  const r12 = document.getElementById('sn-rb12');
+  const f12 = document.getElementById('sn-folha12');
+  const rm  = document.getElementById('sn-rbmes');
+  snRB12    = r12  ? snParseVal(r12.value)  : snRB12;
+  snFolha12 = f12  ? snParseVal(f12.value)  : snFolha12;
+  snRBMes   = rm   ? snParseVal(rm.value)   : snRBMes;
+  // Lê folha mensal
+  MONTHS.forEach((_,i) => {
+    const el = document.getElementById(`sn-folha-m${i}`);
+    if (el) snFolhaMeses[i] = snParseVal(el.value);
+  });
+  // Recalcula totais se folha mensal foi preenchida
+  const totalFolhaMeses = snFolhaMeses.reduce((a,b)=>a+b,0);
+  if (totalFolhaMeses > 0) {
+    snFolha12 = totalFolhaMeses;
+    if (f12) f12.value = snFmtDisplay(snFolha12);
+  }
+  // Atualiza só o painel de resultados e o painel fatorR — não recria tudo
+  snRefreshResults();
+}
+
+// Atualiza apenas as zonas de resultado sem recriar inputs
+function snRefreshResults() {
+  const res = snRB12 > 0 ? calcSN(snRB12, snFolha12, snRBMes, snAnexo) : null;
+  const zone = document.getElementById('sn-results-zone');
+  if (zone) zone.innerHTML = snBuildResultsHTML(res);
+  const fzone = document.getElementById('sn-fatorr-badge');
+  if (fzone) fzone.innerHTML = snBuildFatorRBadge(res);
+  const czone = document.getElementById('sn-comp-table');
+  if (czone) czone.innerHTML = snBuildCompTable(res);
+}
+
+function snBuildFatorRBadge(res) {
+  if (!(snAnexo === 3 || snAnexo === 5) || !res) return '';
+  if (snFolha12 <= 0 || snRB12 <= 0) return `
+    <div class="sn-info-box" style="margin-bottom:16px">
+      <strong>Fator R:</strong> informe a folha de salários para calcular
+    </div>`;
+  const fr = snFolha12 / snRB12;
+  const pct = (fr * 100).toFixed(2).replace('.',',');
+  const ok = fr >= 0.28;
+  return `
+    <div class="sn-info-box" style="margin-bottom:16px;border-color:${ok?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.3)'}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:22px;font-family:'DM Mono',monospace;font-weight:800;color:${ok?'var(--green)':'var(--red)'}">${pct}%</span>
+        <div>
+          <strong style="font-size:12px">Fator R (Folha 12M ÷ RB 12M)</strong><br>
+          <span style="color:${ok?'var(--green)':'var(--red)'}">
+            ${ok ? '≥ 28% → Anexo III (alíquota menor)' : '< 28% → Anexo V (alíquota maior)'}
+          </span>
+        </div>
+      </div>
+      ${ok && snAnexo===5 ? `<div style="margin-top:8px;color:var(--yellow);font-size:11px">Seu FatorR indica Anexo III — considere alterar a aba acima</div>` : ''}
+      ${!ok && snAnexo===3 ? `<div style="margin-top:8px;color:var(--yellow);font-size:11px">Seu FatorR indica Anexo V — considere alterar a aba acima</div>` : ''}
+    </div>`;
+}
+
+function snBuildResultsHTML(res) {
+  if (!res) return `
+    <div class="sn-info-box" style="text-align:center;padding:30px">
+      Preencha a <strong>Receita Bruta 12 meses</strong> ao lado para calcular
+    </div>`;
+  const aliqEf = (res.aliqEfetiva * 100).toFixed(2).replace('.', ',') + '%';
+  const imposto = res.impostoMes;
+  const tribRows = Object.entries(res.dist).map(([k,v])=>`
+    <tr>
+      <td style="font-family:'Syne',sans-serif">${k}</td>
+      <td>${res.faixa.trib[k].toFixed(2).replace('.',',')}%</td>
+      <td style="color:var(--text);font-weight:600">${snFmtBRL(v)}</td>
+    </tr>`).join('');
+  const anexoAtual = SN_ANEXOS[snAnexo];
+  const cppAviso = !anexoAtual.temCPP ? `
+    <div class="sn-info-box" style="margin-top:12px;border-color:rgba(245,158,11,0.3)">
+      <strong style="color:var(--yellow)">Anexo IV:</strong> CPP (INSS patronal) <strong>não está incluso</strong> no DAS.<br>
+      A empresa recolhe a contribuição patronal separadamente via GPS/DARF.
+    </div>` : '';
+
+  return `
+    <div class="sn-faixa-badge">${res.faixaIdx+1}ª Faixa — ${SN_ANEXOS[snAnexo].nome}</div>
+
+    <div class="sn-aliq-efetiva">
+      <div class="big">${aliqEf}</div>
+      <div class="label">Alíquota Efetiva</div>
+    </div>
+
+    <div style="margin-top:16px">
+      <div class="sn-result-row">
+        <span class="sn-result-label">RB 12 meses (base)</span>
+        <span class="sn-result-value">${snFmtBRL(res.rb12)}</span>
+      </div>
+      <div class="sn-result-row">
+        <span class="sn-result-label">Alíquota Nominal da Faixa</span>
+        <span class="sn-result-value">${(res.faixa.aliq*100).toFixed(2).replace('.',',')}%</span>
+      </div>
+      <div class="sn-result-row">
+        <span class="sn-result-label">Valor a Deduzir</span>
+        <span class="sn-result-value">${snFmtBRL(res.faixa.deduzir)}</span>
+      </div>
+      <div class="sn-result-row">
+        <span class="sn-result-label">RB do Mês</span>
+        <span class="sn-result-value">${snFmtBRL(res.rbMes)}</span>
+      </div>
+      <div class="sn-result-row" style="border-top:1px solid rgba(34,197,94,0.25);margin-top:10px;padding-top:12px">
+        <span class="sn-result-label" style="font-weight:700;color:var(--text);font-size:13px">DAS a Recolher</span>
+        <span class="sn-result-value highlight">${snFmtBRL(imposto)}</span>
+      </div>
+    </div>
+
+    ${imposto > 0 ? `
+    <div class="sn-tabela-section" style="margin-top:20px">
+      <div class="sec-header">Repartição dos Tributos <span>no DAS</span></div>
+      <table class="sn-tributos-table">
+        <thead><tr><th>Tributo</th><th>% Repartição</th><th>Valor (R$)</th></tr></thead>
+        <tbody>${tribRows}</tbody>
+      </table>
+    </div>
+    ${cppAviso}` : ''}`;
+}
+
+function snBuildCompTable(res) {
+  if (!res) return '';
+  const anx = SN_ANEXOS[snAnexo];
+  return `
+    <div class="sn-tabela-section" style="margin-top:20px">
+      <div class="sec-header">Alíquotas por Faixa — <span>${anx.nome}</span></div>
+      <table class="sn-tributos-table">
+        <thead><tr><th>Faixa</th><th>Até (RB 12M)</th><th>Alíq. Nominal</th><th>Valor a Deduzir</th><th>Alíq. Efetiva*</th></tr></thead>
+        <tbody>
+          ${anx.faixas.map((f,i)=>{
+            const mid = i===0 ? f.ate*0.5 : (anx.faixas[i-1].ate + f.ate)/2;
+            const ae  = i===0 ? f.aliq : (mid*f.aliq - f.deduzir)/mid;
+            const isAtu = res.faixaIdx === i;
+            return `<tr style="${isAtu?'background:rgba(34,197,94,0.08)':''}">
+              <td style="${isAtu?'color:var(--green);font-weight:700':''}">${i+1}ª ${isAtu?'← você':''}</td>
+              <td>${i===5?'> R$ 3,6M':snFmtBRL(f.ate)}</td>
+              <td>${(f.aliq*100).toFixed(2).replace('.',',')}%</td>
+              <td>${snFmtBRL(f.deduzir)}</td>
+              <td style="${isAtu?'color:var(--green);font-weight:700':'color:var(--text2)'}">${(ae*100).toFixed(2).replace('.',',')}%</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      <div style="padding:8px 14px;font-size:11px;color:var(--text3)">* Alíq. efetiva estimada com ponto médio de cada faixa — use sua RB12 real para resultado exato.</div>
+    </div>`;
+}
+
+function snFmtBRL(v) {
+  if (!v && v !== 0) return '–';
+  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+// ── Builder do HTML principal (roda ao trocar de aba/anexo) ───────
+function buildSimplesNacional() {
+  const res = snRB12 > 0 ? calcSN(snRB12, snFolha12, snRBMes, snAnexo) : null;
+  const anx  = SN_ANEXOS[snAnexo];
+
+  const anexoTabs = Object.entries(SN_ANEXOS).map(([k,v])=>
+    `<button class="sn-anexo-btn ${parseInt(k)===snAnexo?'active':''}" onclick="snSetAnexo(${k})">${v.nome.split('–')[0].trim()}</button>`
+  ).join('');
+
+  const tabelaFaixas = anx.faixas.map((f,i)=>{
+    const isAtu = res && res.faixaIdx === i;
+    return `<tr style="${isAtu?'background:rgba(34,197,94,0.08)':''}">
+      <td style="${isAtu?'color:var(--green);font-weight:700':''}">${i+1}ª faixa ${i===5?'(acima de R$3,6M)':'até '+snFmtBRL(f.ate)}</td>
+      <td style="${isAtu?'color:var(--green);font-weight:700':''}">${(f.aliq*100).toFixed(2).replace('.',',')}%</td>
+      <td style="${isAtu?'color:var(--green);font-weight:700':''}">${snFmtBRL(f.deduzir)}</td>
+    </tr>`;
+  }).join('');
+
+  // Linhas de folha mensal (12 meses) para Fator R
+  const folhaMesesRows = anx.temFatorR ? MONTHS.map((m,i)=>`
+    <tr>
+      <td style="font-family:'Syne',sans-serif;color:var(--text2)">${m}</td>
+      <td><input type="text" id="sn-folha-m${i}" class="editable-input"
+        style="width:140px;text-align:right"
+        placeholder="0,00"
+        value="${snFmtDisplay(snFolhaMeses[i])}"
+        onblur="snBlur(this)"></td>
+    </tr>`).join('') : '';
+
+  return `
+    <div class="section">
+      <div class="section-title">Calculadora – Simples Nacional</div>
+
+      <div class="sn-anexo-tabs">${anexoTabs}</div>
+
+      ${!anx.temCPP ? `<div class="sn-info-box" style="margin-bottom:20px;border-color:rgba(245,158,11,0.3)">
+        <strong style="color:var(--yellow)">Atenção – Anexo IV:</strong>
+        O <strong>CPP (INSS Patronal) não integra o DAS</strong> do Anexo IV. A empresa recolhe a contribuição previdenciária patronal
+        separadamente via GPS/DARF, no percentual normal de 20% sobre a folha. Os percentuais de repartição abaixo não incluem CPP.
+      </div>` : ''}
+
+      <div class="sn-grid">
+
+        <!-- ─── COLUNA ESQUERDA: Inputs ─── -->
+        <div class="sn-input-panel">
+          <h3>Dados para Cálculo</h3>
+
+          <div class="sn-field">
+            <label>Receita Bruta Acumulada – 12 meses (R$)</label>
+            <input type="text" id="sn-rb12" placeholder="Ex: 1.200.000,00"
+              value="${snFmtDisplay(snRB12)}"
+              onblur="snBlur(this)">
+            <span style="font-size:10px;color:var(--text3);margin-top:4px;display:block">Digite o valor e pressione Tab ou clique fora para confirmar</span>
+          </div>
+
+          <div class="sn-field">
+            <label>Receita Bruta do Mês de Competência (R$)</label>
+            <input type="text" id="sn-rbmes" placeholder="Ex: 100.000,00"
+              value="${snFmtDisplay(snRBMes)}"
+              onblur="snBlur(this)">
+          </div>
+
+          ${anx.temFatorR ? `
+          <!-- ─── FATOR R: Folha mensal ─── -->
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+            <div class="section-title" style="font-size:11px;margin-bottom:12px">
+              Fator R — Folha de Salários por Mês
+            </div>
+            <div id="sn-fatorr-badge">${snBuildFatorRBadge(res)}</div>
+
+            <div class="sn-info-box" style="margin-bottom:14px">
+              <strong>Fator R</strong> = Folha Acum. 12M ÷ RB Acum. 12M<br>
+              <strong>≥ 28%</strong> → Anexo III &nbsp;|&nbsp; <strong>&lt; 28%</strong> → Anexo V<br>
+              Preencha a folha de cada mês (ou só o total acumulado abaixo).
+            </div>
+
+            <div class="sn-field">
+              <label>Folha Acumulada 12 meses — Total (R$)</label>
+              <input type="text" id="sn-folha12" placeholder="Total acumulado (preenchimento automático)"
+                value="${snFmtDisplay(snFolha12)}"
+                onblur="snBlur(this)">
+            </div>
+
+            <div class="sn-tabela-section" style="margin-top:8px">
+              <div class="sec-header">Folha de Salários <span>por mês (últimos 12 meses)</span></div>
+              <table class="sn-tributos-table">
+                <thead><tr><th>Mês</th><th>Folha Bruta (R$)</th></tr></thead>
+                <tbody>${folhaMesesRows}</tbody>
+                <tfoot>
+                  <tr style="background:rgba(59,130,246,0.08)">
+                    <td style="font-weight:700;color:var(--accent2)">Total 12M</td>
+                    <td style="font-weight:700;color:var(--accent2);font-family:'DM Mono',monospace">
+                      ${snFmtBRL(snFolhaMeses.reduce((a,b)=>a+b,0)||snFolha12)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>` : ''}
+
+          <div class="sn-info-box" style="margin-top:16px">
+            <strong>Fórmula oficial:</strong><br>
+            Alíq. Efetiva = (RB12 × Alíq. Nominal − Valor a Deduzir) ÷ RB12<br>
+            DAS do Mês = RB do Mês × Alíq. Efetiva
+          </div>
+
+          <!-- Tabela de referência do anexo -->
+          <div class="sn-tabela-section" style="margin-top:20px">
+            <div class="sec-header">Tabela de Referência — <span>${anx.nome}</span></div>
+            <table class="sn-tributos-table">
+              <thead><tr><th>Faixa</th><th>Alíq. Nominal</th><th>Valor a Deduzir</th></tr></thead>
+              <tbody>${tabelaFaixas}</tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ─── COLUNA DIREITA: Resultados ─── -->
+        <div class="sn-result-panel">
+          <h3>Resultado da Apuração</h3>
+          <div id="sn-results-zone">${snBuildResultsHTML(res)}</div>
+        </div>
+
+      </div>
+
+      <!-- Tabela comparativa completa -->
+      <div id="sn-comp-table">${snBuildCompTable(res)}</div>
+    </div>`;
+}
+
+function snSetAnexo(n) {
+  snAnexo = parseInt(n);
+  render();
+}
+
+// ──────────────────────────────────────────────
+// GENERATE PDF — renderiza todas as abas para impressão
+// ──────────────────────────────────────────────
+function generatePDF() {
+  const mes = currentMes;
+  const area = document.getElementById('content-area');
+  const originalHTML = area.innerHTML;
+
+  // Salva estado atual
+  const savedView = currentView;
+  const savedTab = currentTab;
+
+  // Força visão anual para o faturamento mostrar todos os meses
+  currentView = 'anual';
+
+  // Monta o conteúdo completo de todas as abas
+  let fullHTML = '';
+
+  // Cabeçalho do relatório
+  fullHTML += `
+    <div class="pdf-header">
+      <div class="pdf-header-title">GTCON – Memória de Cálculo Fiscal</div>
+      <div class="pdf-header-sub">
+        Empresa: ${document.getElementById('sel-cliente').value} &nbsp;|&nbsp; 
+        Competência: ${MONTHS[mes]} / ${currentAno} &nbsp;|&nbsp; 
+        Regime: Lucro Presumido
+      </div>
+    </div>`;
+
+  // 1. Faturamento (visão anual)
+  fullHTML += `<div class="pdf-section">`;
+  fullHTML += buildFaturamentoGrade();
+  fullHTML += `</div>`;
+
+  // Restaura visão mensal para as demais abas usarem o mês correto
+  currentView = savedView;
+
+  // 2. IRPJ / CSLL
+  fullHTML += `<div class="pdf-section pdf-page-break">`;
+  fullHTML += buildIrpjMensal(mes);
+  fullHTML += `</div>`;
+
+  // 3. PIS / COFINS
+  fullHTML += `<div class="pdf-section pdf-page-break">`;
+  fullHTML += buildPisMensal(mes);
+  fullHTML += `</div>`;
+
+  // 4. ICMS
+  fullHTML += `<div class="pdf-section pdf-page-break">`;
+  fullHTML += buildIcmsMensal(mes);
+  fullHTML += `</div>`;
+
+  // 5. ICMS-ST
+  fullHTML += `<div class="pdf-section">`;
+  fullHTML += buildStMensal(mes);
+  fullHTML += `</div>`;
+
+  // 6. DIFAL
+  fullHTML += `<div class="pdf-section pdf-page-break">`;
+  fullHTML += buildDifalMensal(mes);
+  fullHTML += `</div>`;
+
+  // 7. Resumo Geral
+  fullHTML += `<div class="pdf-section pdf-page-break">`;
+  fullHTML += buildResumoMensal(mes);
+  fullHTML += `</div>`;
+
+  // 8. Simples Nacional (se tiver dados)
+  if (snRB12 > 0) {
+    fullHTML += `<div class="pdf-section pdf-page-break">`;
+    fullHTML += buildSimplesNacional();
+    fullHTML += `</div>`;
+  }
+
+  // Injeta no content-area
+  area.innerHTML = `<div class="pdf-full-report">${fullHTML}</div>`;
+  document.body.classList.add('printing-full-report');
+
+  // Aguarda renderização e imprime
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.print();
+      // Restaura estado original
+      document.body.classList.remove('printing-full-report');
+      currentView = savedView;
+      currentTab = savedTab;
+      area.innerHTML = originalHTML;
+    });
+  });
+}
+
+// ──────────────────────────────────────────────
+// EXPORT CSV
+// ──────────────────────────────────────────────
+function exportCSV() {
+  const mes = currentMes;
+  const d = getD(mes);
+  const rows = [
+    ['Memória de Cálculo – GTCON'],
+    [`Competência: ${MONTHS[mes]}/${currentAno}`],
+    [''],
+    ['Imposto', 'Valor a Pagar (R$)'],
+    ['IRPJ', d.irpj.irpj_pagar],
+    ['CSLL', d.irpj.csll_pagar],
+    ['PIS', d.pis.pis_pagar],
+    ['COFINS', d.pis.cofins_pagar],
+    ['ICMS', d.icms.icms_pagar],
+    ['FECP', d.icms.fecp_recolher],
+    ['ICMS Antecipação', d.icms_ant.antec_recolher],
+    ['IPI', d.ipi.ipi_pagar],
+    ['ICMS-ST', d.icms_st.st_recolher],
+    ['DIFAL', d.difal.difal_recolher],
+  ];
+  const csv = rows.map(r=>r.join(';')).join('\n');
+  const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `memoria_calculo_${currentAno}_${String(mes+1).padStart(2,'0')}.csv`;
+  a.click();
+}
+
+// ──────────────────────────────────────────────
+// INIT — load demo data for January
+// ──────────────────────────────────────────────
+(function initDemo() {
+  getStore();
+})();
+
+render();
+
+
+// ══════════════════════════════════════════════════════════════════════════
+// SUPABASE — Integração com a tabela `clientes`
+// ══════════════════════════════════════════════════════════════════════════
+
+const SUPA_URL    = 'https://jvhkczdtfulegikcpiov.supabase.co';
+const SUPA_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2aGtjemR0ZnVsZWdpa2NwaW92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNTkxNjEsImV4cCI6MjA4ODczNTE2MX0.HEETVDQUNJRLG8GusxhcZ8kmxx9Uo9JoBB0MoSUdjTg';
+const SUPA_HEADERS = { 'apikey': SUPA_ANON, 'Authorization': `Bearer ${SUPA_ANON}`, 'Content-Type': 'application/json' };
+
+// Dados do cliente ativo (preenchidos após seleção)
+let clienteAtivo = {
+  id: null,
+  nome: 'Demo LTDA',
+  cnpj: null,
+  regime: null,
+  sci: null,
+  // campos raw da tabela — preenchidos automaticamente após descoberta dos campos
+  _raw: {}
+};
+
+// Mapa de campos — detectado automaticamente na primeira chamada
+let camposCliente = null;
+
+// ── Chamada genérica à API REST do Supabase ──────────────────────────────
+async function supaFetch(endpoint, params = '') {
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/${endpoint}${params}`, { headers: SUPA_HEADERS });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.error('[Supabase]', e);
+    return null;
+  }
+}
+
+// ── Detecta automaticamente os campos relevantes na tabela ───────────────
+// Estratégia: busca 1 linha e inspeciona as keys retornadas
+async function detectarCampos() {
+  if (camposCliente) return camposCliente; // cache
+  const rows = await supaFetch('clientes', '?limit=1&select=*');
+  if (!rows || rows.length === 0) return null;
+  const keys = Object.keys(rows[0]);
+
+  // Heurística de mapeamento: procura por nomes comuns para cada campo
+  const find = (...candidates) => keys.find(k => candidates.some(c => k.toLowerCase().includes(c.toLowerCase()))) || null;
+
+  camposCliente = {
+    id:     find('id'),
+    nome:   find('nome', 'razao', 'empresa', 'name'),
+    cnpj:   find('cnpj'),
+    regime: find('regime', 'tributario', 'enquadramento', 'tipo_regime', 'modalidade'),
+    sci:    find('sci', 'codigo_sci', 'cod_sci', 'codigo', 'codigo_cliente', 'client_code'),
+    _all:   keys
+  };
+
+  console.log('[Supabase] Campos detectados:', camposCliente);
+  return camposCliente;
+}
+
+// ── Busca clientes por nome (autocomplete) ───────────────────────────────
+async function buscarClientes(termo) {
+  const campos = await detectarCampos();
+  if (!campos || !campos.nome) return [];
+  const enc = encodeURIComponent(termo);
+  const rows = await supaFetch('clientes', `?${campos.nome}=ilike.*${enc}*&limit=10&select=*`);
+  return rows || [];
+}
+
+// ── Carrega todos os clientes (para o dropdown inicial) ──────────────────
+async function carregarListaClientes() {
+  const campos = await detectarCampos();
+  if (!campos || !campos.nome) return [];
+  const rows = await supaFetch('clientes', `?select=*&order=${campos.nome}.asc&limit=200`);
+  return rows || [];
+}
+
+// ── Ativa um cliente pelo objeto row retornado do Supabase ───────────────
+function ativarCliente(row) {
+  const c = camposCliente;
+  clienteAtivo = {
+    id:     c.id     ? row[c.id]     : null,
+    nome:   c.nome   ? row[c.nome]   : 'Cliente',
+    cnpj:   c.cnpj   ? row[c.cnpj]  : null,
+    regime: c.regime ? row[c.regime] : null,
+    sci:    c.sci    ? row[c.sci]    : null,
+    _raw:   row
+  };
+  atualizarHeaderCliente();
+  render();
+}
+
+// ── Atualiza o header com os dados do cliente ativo ──────────────────────
+function atualizarHeaderCliente() {
+  const { nome, cnpj, regime, sci } = clienteAtivo;
+
+  // Nome da empresa no input
+  const inputNome = document.getElementById('sel-cliente');
+  if (inputNome) inputNome.value = nome || '';
+
+  // Bloco de info do cliente no header
+  const infoEl = document.getElementById('cliente-info-header');
+  if (infoEl) {
+    const regimeLabel = formatarRegime(regime);
+    infoEl.innerHTML = `
+      <div class="cli-nome">${nome || '–'}</div>
+      <div class="cli-meta">
+        ${cnpj  ? `<span class="cli-tag">CNPJ <strong>${formatarCNPJ(cnpj)}</strong></span>` : ''}
+        ${sci   ? `<span class="cli-tag">SCI <strong>${sci}</strong></span>` : ''}
+        ${regime? `<span class="cli-tag cli-regime">${regimeLabel}</span>` : ''}
+      </div>`;
+  }
+
+  // Status pill com o regime
+  const pillEl = document.getElementById('status-regime');
+  if (pillEl) {
+    pillEl.textContent = formatarRegime(regime) || 'Sem Regime';
+  }
+
+  // Atualiza o logo-sub
+  const subEl = document.querySelector('.logo-sub');
+  if (subEl) subEl.textContent = 'Memória de Cálculo Fiscal';
+}
+
+// ── Helpers de formatação ─────────────────────────────────────────────────
+function formatarCNPJ(v) {
+  if (!v) return '';
+  const d = String(v).replace(/\D/g, '');
+  if (d.length !== 14) return String(v);
+  return `${d.slice(0,2)}.${d.slice(2,5)}.${d.slice(5,8)}/${d.slice(8,12)}-${d.slice(12)}`;
+}
+
+function formatarRegime(regime) {
+  if (!regime) return null;
+  const r = String(regime).toLowerCase().trim();
+  if (r.includes('presumido'))  return 'Lucro Presumido';
+  if (r.includes('real'))       return 'Lucro Real';
+  if (r.includes('simples'))    return 'Simples Nacional';
+  if (r.includes('mei'))        return 'MEI';
+  if (r.includes('imune'))      return 'Imune / Isento';
+  return regime; // devolve original se não reconhecer
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// AUTOCOMPLETE — Seletor de cliente
+// ══════════════════════════════════════════════════════════════════════════
+
+let autocompleteTimeout = null;
+let listaClientesCache  = [];
+
+function initSeletorCliente() {
+  const input   = document.getElementById('sel-cliente');
+  const dropdown= document.getElementById('cliente-dropdown');
+  if (!input || !dropdown) return;
+
+  // Carrega lista inicial ao focar
+  input.addEventListener('focus', async () => {
+    if (listaClientesCache.length === 0) {
+      dropdown.innerHTML = `<div class="cli-drop-loading">Carregando clientes...</div>`;
+      dropdown.style.display = 'block';
+      listaClientesCache = await carregarListaClientes();
+    }
+    renderDropdown(listaClientesCache, dropdown);
+    dropdown.style.display = 'block';
+  });
+
+  // Filtra ao digitar
+  input.addEventListener('input', () => {
+    clearTimeout(autocompleteTimeout);
+    const termo = input.value.trim();
+    autocompleteTimeout = setTimeout(async () => {
+      let lista;
+      if (termo.length < 2) {
+        lista = listaClientesCache;
+      } else {
+        lista = await buscarClientes(termo);
+      }
+      renderDropdown(lista, dropdown);
+      dropdown.style.display = 'block';
+    }, 280);
+  });
+
+  // Fecha ao clicar fora
+  document.addEventListener('click', (e) => {
+    if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
+    }
+  });
+
+  // Navegação por teclado
+  input.addEventListener('keydown', (e) => {
+    const items = dropdown.querySelectorAll('.cli-drop-item');
+    const active = dropdown.querySelector('.cli-drop-item.focused');
+    let idx = Array.from(items).indexOf(active);
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (idx < items.length - 1) { if (active) active.classList.remove('focused'); items[idx+1].classList.add('focused'); items[idx+1].scrollIntoView({block:'nearest'}); }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (idx > 0) { if (active) active.classList.remove('focused'); items[idx-1].classList.add('focused'); items[idx-1].scrollIntoView({block:'nearest'}); }
+    } else if (e.key === 'Enter' && active) {
+      e.preventDefault();
+      active.click();
+    } else if (e.key === 'Escape') {
+      dropdown.style.display = 'none';
+    }
+  });
+}
+
+function renderDropdown(lista, dropdown) {
+  const c = camposCliente;
+  if (!lista || lista.length === 0) {
+    dropdown.innerHTML = `<div class="cli-drop-empty">Nenhum cliente encontrado</div>`;
+    return;
+  }
+  dropdown.innerHTML = lista.map(row => {
+    const nome   = c && c.nome   ? row[c.nome]   : JSON.stringify(row);
+    const cnpj   = c && c.cnpj   ? row[c.cnpj]   : '';
+    const regime = c && c.regime ? row[c.regime]  : '';
+    const sci    = c && c.sci    ? row[c.sci]     : '';
+    return `<div class="cli-drop-item" onclick="selecionarCliente(${JSON.stringify(JSON.stringify(row))})">
+      <div class="cli-drop-nome">${nome || '–'}</div>
+      <div class="cli-drop-meta">
+        ${cnpj   ? `<span>CNPJ: ${formatarCNPJ(cnpj)}</span>` : ''}
+        ${regime ? `<span>${formatarRegime(regime)}</span>` : ''}
+        ${sci    ? `<span>SCI: ${sci}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selecionarCliente(rowStr) {
+  const row = JSON.parse(rowStr);
+  ativarCliente(row);
+  document.getElementById('cliente-dropdown').style.display = 'none';
+}
+
+// ── Inicializa após o DOM estar pronto ────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  await detectarCampos();
+  initSeletorCliente();
+});
+
+</script>
+</body>
+</html>
